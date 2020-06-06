@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Pharmacy Management - @yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}"/>
+
+    <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('css/main.css')}}">
+
+
+    {{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
+</head>
+<body class="login_body">
+{{--<p>Hello World</p>--}}
+
+<div class="main-container">
+    <div class="login_div">
+        <div class="col-lg-5">
+
+            <div class="login_form">
+                <div class="mb-4 pt-4 pl-5 pb-3 ">
+                    <h3><b><i>Login</i></b></h3>
+
+                </div>
+                <form>
+                    <div class="mb-4 pb-2 ">
+                        {{--                    <label for="#name123" class="w-25">Name</label>--}}
+                        <input type="text" autocomplete="off" placeholder="email" name="name" class="">
+                        {{--                    <input type="number" id="price"  min="0" name="price" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input">--}}
+
+                    </div>
+                    <span class="text-danger" id="name_error">
+                                </span>
+                    <div class="mb-3 pb-3">
+                        <input type="password"  name="password" placeholder="password">
+                    </div>
+                    <div class="ml-lg-5 pl-1">
+                        <button style="width: 100px">Login</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" ></script>
+<script src="{{asset('js/bootstrap.js')}}"></script>
+
+@yield('script')
+{{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>--}}
+
+{{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>--}}
+
+</html>

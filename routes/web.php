@@ -53,5 +53,9 @@ Route::group(['namespace'=>'Web'],function() {
     });
 });
 Route::group(['namespace'=>'Web'],function() {
-    Route::get('/','StaffController@index');
+//    Route::get('/','StaffController@index');
+    Route::get('/','LoginController@index');
+    Route::get('login','LoginController@index');
+    Route::match(['get','post'],'logout',"LoginController@logout");
+
 });

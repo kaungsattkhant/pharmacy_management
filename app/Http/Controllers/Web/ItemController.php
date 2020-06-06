@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 class ItemController extends Controller
 {
     public function index(){
-        $items=Item::all();
+        $items=Item::paginate(10);
         return view('Item.item_index',compact('items'));
     }
     public function store(Request $request){
@@ -90,7 +90,7 @@ class ItemController extends Controller
                 ->orWhereHas('category', function($q) use($search) {
                     $q->where('name', 'like', '%' .$search. '%');
                 })
-                ->get();
+                ->paginate(10);
 //            $time=Item::where()
             return view('Item.item_index',compact('items'));
         }

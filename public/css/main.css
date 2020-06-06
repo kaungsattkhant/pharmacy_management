@@ -76,3 +76,19 @@ body{
 input:focus{
     outline: none;
 }
+/**************************login css**********************/
+.login_body{
+    background-color: navajowhite;
+    color:antiquewhite;
+}
+.login_div{
+    background-color:darkslategray ;
+    width:380px;
+    height:300px;
+    margin:180px 0 0 500px;
+    alignment: center;
+    border-radius: 10px;
+}
+.login_form{
+    margin:60px 0 0 80px;
+}
