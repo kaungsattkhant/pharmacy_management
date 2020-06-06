@@ -1,7 +1,7 @@
 @extends('Layouts.master')
 @section('content')
     <div class="content">
-        {{--        <h3>Staff Management</h3>--}}
+        {{--        <h3>StaffAuth Management</h3>--}}
         <div class="sub-content pt-4 mt-3">
             <div class="float-right">
                 <button class="btn btn-default cs-btn" data-toggle="modal" data-target="#branch_create" >Add</button>

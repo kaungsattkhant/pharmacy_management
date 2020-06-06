@@ -33,7 +33,7 @@ class StaffController extends Controller
             ]);
             return response()->json([
                 'success'=>true,
-                'message'=>'Staff create successfully',
+                'message'=>'StaffAuth create successfully',
             ]);
         }
         return response()->json([
@@ -59,7 +59,7 @@ class StaffController extends Controller
             ]);
             return response()->json([
                 'success'=>true,
-                'message'=>'Staff Update successfully',
+                'message'=>'StaffAuth Update successfully',
             ]);
         }
         return response()->json([
