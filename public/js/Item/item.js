@@ -1,0 +1,179 @@
+$(document).ready(function(){
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $('#editMessage').hide();
+    $('#createMessage').hide();
+
+
+    $('#itemSubmit').click( function(event) {
+        var name=$('#name').val();
+        var price=$('#price').val();
+        var category=$('#category').val();
+        var qty=$('#qty').val();
+        // role===1 ? branch=null :branch=$('#b').val();
+        event.preventDefault();
+        $.ajax({
+            url:'/item/store',
+            type:'POST',
+            data:{
+                name:name,
+                price:price,
+                category:category,
+                qty:qty
+            },
+            success:function(data)
+            {
+                console.log(data.errors);
+                if(data.errors)
+                {
+                    if(data.errors.name){
+                        $( '#name_error' ).html( data.errors.name[0] );
+                    }
+                    if(data.errors.price){
+                        $( '#price_error' ).html( data.errors.price[0] );
+                    }
+                    if(data.errors.category){
+                        $( '#category_error' ).html( data.errors.category[0] );
+                    }
+                    if(data.errors.qty){
+                        $( '#qty_error' ).html( data.errors.qty[0] );
+                    }
+
+                }
+                if(data.is_success==true)
+                {
+                    $('#createMessage').show();
+                    $( "#success").html(data.message);
+                    setTimeout(function() {
+                        $('#item_create').modal('hide');
+                        setTimeout(location.reload.bind(location));
+                    }, 1000);
+                }
+            },
+        });
+    });
+    $('#itemSubmit1').click(function(event){
+        var name = $("#name1").val();
+        var price = $("#price1").val();
+        var category=$('#category1').val();
+        var qty=$('#qty1').val();
+        // role==1 ? branch=null :branch=$('#branch1').val();
+        var id=$('#id').val();
+        $('#name1').html("");
+        $('#price1').html("");
+        // $('#category1').html("");
+        event.preventDefault();
+        $.ajax({
+            url:'item/update',
+            type:'POST',
+            data:{
+                id:id,
+                name:name,
+                price:price,
+                category:category,
+                qty:qty,
+            },
+            success:function(data)
+            {
+                if(data.errors)
+                {
+                    if(data.errors.name){
+                        $( '#name_error1' ).html( data.errors.name[0] );
+                    }
+                    if(data.errors.price){
+                        $( '#price_error1' ).html( data.errors.price[0] );
+                    }
+                    if(data.errors.category){
+                        $( '#category_error1' ).html( data.errors.category[0] );
+                    }
+                    if(data.errors.qty){
+                        $( '#qty_error1' ).html( data.errors.qty[0] );
+                    }
+
+                }
+                if(data.is_success==true)
+                {
+                    // $('#editAdmin').delay(300).modal('toggle');
+                    $('#editMessage').show();
+                    $( "#success1" ).html(data.message);
+                    setTimeout(function() {
+                        $('#item_edit').modal('hide');
+                        setTimeout(location.reload.bind(location));
+                    }, 1000);
+                }
+            },
+        });
+    });
+
+    // $('#admin_changePass').click(function(event){
+    //     var id=$('#changePasswordId').val();
+    //     var password=$('#password2').val();
+    //     var password_confirmation=$('#password_confirmation2').val();
+    //     $('#password_error2').html("");
+    //     $('#password_confirmation_error2').html("");
+    //     event.preventDefault();
+    //     $.ajax({
+    //         url:'staff/change_pass',
+    //         type:'POST',
+    //         data:{
+    //             id:id,
+    //             password:password,
+    //             password_confirmation:password_confirmation,
+    //         },
+    //         success:function(data)
+    //         {
+    //             console.log(data);
+    //             if(data.errors)
+    //             {
+    //
+    //                 if(data.errors.password){
+    //                     $( '#password_error2' ).html( data.errors.password[0] );
+    //                 }
+    //                 if(data.errors.password_confirmation){
+    //                     $( '#password_confirmation_error2').html( data.errors.password_confirmation[0] );
+    //                 }
+    //             }
+    //             if(data.success==true)
+    //             {
+    //                 $('#changepass').modal('toggle');
+    //                 location.reload();
+    //             }
+    //
+    //         },
+    //     });
+    //
+    // });
+
+});
+function editItem(id)
+{
+    $.ajax({
+        url: "item/" + id + "/edit",
+        data: "get",
+        dataType: "json",
+        success: function (data) {
+            $('#id').val(data.id);
+            $('#price1').val(data.price);
+            $('#qty1').val(data.qty);
+            $('#name1').val(data.name);
+            $('#category1 option').prop('selected',false);
+            $('#category1 option[value="'+data.category_id+'"]' ).prop('selected','selected');
+            $('#item_edit').modal('show');
+        }
+    });
+}
+
+function destroyItem($id) {
+    $('#delete_id').val($id);
+    $('#item_destroy').modal('show');
+}
+
+function addQty(id) {
+    $('#item_id').val(id);
+    $('#item_add_qty').modal('show');
+
+}
