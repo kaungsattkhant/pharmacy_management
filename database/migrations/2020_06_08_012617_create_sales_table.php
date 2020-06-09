@@ -15,6 +15,11 @@ class CreateSalesTable extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->char('invoice_no',60);
+            $table->dateTime('date_time');
+            $table->bigInteger('total_kyats');
+            $table->unsignedBigInteger('staff_id');
+            $table->foreign('staff_id')->references('id')->on('staff')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

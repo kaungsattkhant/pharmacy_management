@@ -1994,6 +1994,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   // mounted() {
@@ -2004,12 +2015,20 @@ __webpack_require__.r(__webpack_exports__);
       search: '',
       item_id: '',
       results: [],
+      old_qty: '',
       qty: '',
       price: '',
       modal: false,
       item_list: [],
-      total: ''
+      total: '',
+      errorMessage: '',
+      error: true
     };
+  },
+  mounted: function mounted() {// console.log(this.item_list);
+    // if(this.item_list.length<=0){
+    //     console.log('error');
+    // }
   },
   methods: {
     getItemName: function getItemName() {
@@ -2018,21 +2037,22 @@ __webpack_require__.r(__webpack_exports__);
       this.results = [];
 
       if (this.search.length > 0) {
-        axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/pos/get_item_name', {
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/sale/get_item_name', {
           params: {
             search: this.search
           }
         }).then(function (response) {
-          console.log(response.data);
+          // console.log(response.data);
           _this.results = response.data.items;
         });
       }
     },
-    selectItem: function selectItem($id, item_name, price) {
+    selectItem: function selectItem($id, item_name, price, old) {
       this.modal = false;
       this.search = item_name;
       this.item_id = $id;
       this.price = price;
+      this.old_qty = old; // console.log(this);
     },
     addItem: function addItem() {
       this.item_list.push({
@@ -2041,17 +2061,54 @@ __webpack_require__.r(__webpack_exports__);
         qty: this.qty,
         price: this.price
       });
-      console.log(this.item_list);
-      var total = 0;
-      $.each(this.item_list, function (key, value) {
-        total += parseInt(value.qty, 10) * value.price;
-      });
-      this.total = total; // console.log(total);
-
+      this.getTotal(this.item_list);
       this.modal = false;
       this.search = '';
       this.qty = '';
+    },
+    deleteItem: function deleteItem(items, index) {
+      items.splice(index, 1);
+      this.getTotal(items);
+    },
+    getTotal: function getTotal(items) {
+      var total = 0;
+      $.each(items, function (key, value) {
+        total += parseInt(value.qty, 10) * value.price;
+      });
+      this.total = total;
+    },
+    sendData: function sendData() {
+      // console.log(this.item_list);
+      var items = this.item_list;
+      var total = this.total;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/sale/create', {
+        items: items,
+        total: total
+      }).then(function (response) {
+        window.location.replace('/sale/sale_record');
+      });
+    },
+    checkQty: function checkQty() {
+      var old = parseInt(this.old_qty); // console.log(this.item_list);
+
+      if (old < this.qty) {
+        this.errorMessage = 'Not Enough Quantity ';
+        this.error = true;
+      } else {
+        this.errorMessage = '';
+        this.error = false;
+      }
+    },
+    isDisable: function isDisable() {
+      return this.error == true;
     }
+  },
+  created: function created() {
+    console.log(this.item_list); // if(this.item_list.length<=0){
+    //     console.log('error');
+    // }else{
+    //     console.log('s');
+    // }
   }
 });
 
@@ -37601,9 +37658,31 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "content  pt-3" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "col-lg-12 " }, [
+      _c(
+        "button",
+        {
+          staticClass: " btn btn-default cs-btn",
+          attrs: { disabled: _vm.isDisable() },
+          on: {
+            click: function($event) {
+              return _vm.sendData()
+            }
+          }
+        },
+        [_vm._v("Done")]
+      )
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "left-div col-lg-5 bg-light  float-left mt-5 " }, [
+      _c("div", [
+        _vm.errorMessage
+          ? _c("span", { staticClass: "text-danger" }, [
+              _vm._v(_vm._s(_vm.errorMessage))
+            ])
+          : _vm._e()
+      ]),
+      _vm._v(" "),
       _c("input", {
         directives: [
           {
@@ -37671,7 +37750,8 @@ var render = function() {
                         return _vm.selectItem(
                           result.id,
                           result.name,
-                          result.price
+                          result.price,
+                          result.qty
                         )
                       }
                     }
@@ -37703,12 +37783,17 @@ var render = function() {
           attrs: { type: "number", min: "0", name: "qty" },
           domProps: { value: _vm.qty },
           on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
+            input: [
+              function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.qty = $event.target.value
+              },
+              function($event) {
+                return _vm.checkQty()
               }
-              _vm.qty = $event.target.value
-            }
+            ]
           }
         })
       ]),
@@ -37721,6 +37806,7 @@ var render = function() {
           {
             staticClass:
               "btn btn-nb-mount2 fontsize-mount22 px-3 col-md-4   cs-btn",
+            attrs: { disabled: _vm.isDisable() },
             on: {
               click: function($event) {
                 return _vm.addItem()
@@ -37733,13 +37819,25 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "col-lg-6 bg-light h-75 float-right mt-5" }, [
-      _vm.total
-        ? _c("p", [_c("b", [_vm._v("Total:")]), _vm._v(_vm._s(_vm.total))])
-        : _vm._e(),
+      _c("p", [
+        _c("b", [_vm._v("Total:")]),
+        _vm._v(" "),
+        _vm.total
+          ? _c("i", [
+              _vm._v(
+                "\n                        " +
+                  _vm._s(_vm.total) +
+                  "\n\n                    "
+              )
+            ])
+          : _c("i", [
+              _vm._v("\n                        0\n                    ")
+            ])
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "table" }, [
-        _c("table", { staticClass: "table-striped" }, [
-          _vm._m(1),
+      _c("div", { staticClass: "table-responsive" }, [
+        _c("table", { staticClass: "table" }, [
+          _vm._m(0),
           _vm._v(" "),
           _c(
             "tbody",
@@ -37770,7 +37868,7 @@ var render = function() {
                       staticClass: "float-right border-0",
                       on: {
                         click: function($event) {
-                          return _vm.item_list.splice(index, 1)
+                          return _vm.deleteItem(_vm.item_list, index)
                         }
                       }
                     },
@@ -37787,16 +37885,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-lg-12 " }, [
-      _c("button", { staticClass: " btn btn-default cs-btn " }, [
-        _vm._v("Done")
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

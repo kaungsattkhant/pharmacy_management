@@ -1,4 +1,4 @@
 @extends('Layouts.master')
 @section('content')
-    <h2>Sale</h2>
+    <pos-index></pos-index>
 @endsection

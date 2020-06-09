@@ -58,14 +58,14 @@ Route::group(['middleware'=>['frontman']],function() {
     Route::group(['namespace' => 'Web'], function () {
         Route::group(['prefix'=>'sale'],function(){
             Route::get('/','SaleController@index');
-            Route::post('/store','CategoryController@store');
-            Route::get('{id}/edit','CategoryController@edit');
-            Route::post('update','CategoryController@update');
-            Route::post('destroy','CategoryController@destroy');
+            Route::get('get_item_name','SaleController@get_item_name');
+            Route::post('create','SaleController@sale_create');
+            Route::get('sale_record','SaleController@sale_record');
         });
         Route::group(['prefix'=>'pos'],function(){
             Route::get('/','POSController@index');
             Route::get('get_item_name','POSController@get_item_name');
+//            Route::post('create','POSController@sale_create');
         });
     });
 });

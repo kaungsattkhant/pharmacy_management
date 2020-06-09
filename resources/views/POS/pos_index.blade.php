@@ -1,6 +1,6 @@
 @extends('Layouts.master')
 @section('content')
-    <pos-index></pos-index>
+{{--    <pos-index></pos-index>--}}
 {{--    <p>Hello POS</p>--}}
 {{--<div class="content  pt-3">--}}
 {{--    <form>--}}

@@ -17,8 +17,8 @@ class BranchTableSeeder extends Seeder
             'phone_number'=>'09939338328',
         ]);
         \App\Model\Branch::create([
-            'name'=>'Chan Mya Branch',
-            'address'=>'Mandalay,Chan Mya Thar Se',
+            'name'=>'Mahar Aung Myay Branch',
+            'address'=>'Mandalay,Mahar Aung Myay',
             'phone_number'=>'09976363',
         ]);
         \App\Model\Branch::create([
