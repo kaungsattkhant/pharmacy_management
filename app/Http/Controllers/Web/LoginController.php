@@ -13,7 +13,8 @@ class LoginController extends Controller
     }
     public function login(Request $request){
         request()->validate([
-            'email' => 'required|string|email|max:255|exists:staff,email',
+//            'email' => 'required|string|email|max:255|exists:staff,email',
+            'email' => 'required',
             'password' => 'required',
         ]);
 
@@ -22,7 +23,12 @@ class LoginController extends Controller
             'email'=>$request->email,
             'password'=>$request->password,
         ])) {
-            return redirect()->intended('staff');
+            if(Auth::user()->isAdmin()){
+                return redirect()->intended('staff');
+
+            }elseif(Auth::user()->isFrontMan()){
+                return redirect()->intended('sale');
+            }
         }
         return redirect('login');
     }

@@ -27,6 +27,7 @@
                         <th>Price</th>
                         <th>Qty</th>
                         <th>Category</th>
+                        <th>Branch</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -38,6 +39,7 @@
                             <td>{{$item->price}}</td>
                             <td>{{$item->qty}}</td>
                             <td>{{$item->category->name}}</td>
+                            <td>{{$item->branch->name}}</td>
                             <td>
                                 <button class="btn btn-default btn-sm cs-btn" onclick="editItem({{$item->id}})">Edit</button>
                                 <button class="btn btn-default btn-sm cs-btn" style="background-color: darkred" onclick="destroyItem({{$item->id}})">Delete</button>

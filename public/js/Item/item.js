@@ -4,7 +4,6 @@ $(document).ready(function(){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
     $('#editMessage').hide();
     $('#createMessage').hide();
 
@@ -14,6 +13,7 @@ $(document).ready(function(){
         var price=$('#price').val();
         var category=$('#category').val();
         var qty=$('#qty').val();
+        var branch=$('#branch').val();
         // role===1 ? branch=null :branch=$('#b').val();
         event.preventDefault();
         $.ajax({
@@ -23,7 +23,8 @@ $(document).ready(function(){
                 name:name,
                 price:price,
                 category:category,
-                qty:qty
+                qty:qty,
+                branch:branch,
             },
             success:function(data)
             {
@@ -41,6 +42,9 @@ $(document).ready(function(){
                     }
                     if(data.errors.qty){
                         $( '#qty_error' ).html( data.errors.qty[0] );
+                    }
+                    if(data.errors.branch){
+                        $( '#branch_error' ).html( data.errors.branch[0] );
                     }
 
                 }
@@ -61,6 +65,7 @@ $(document).ready(function(){
         var price = $("#price1").val();
         var category=$('#category1').val();
         var qty=$('#qty1').val();
+        var branch=$('#branch1').val();
         // role==1 ? branch=null :branch=$('#branch1').val();
         var id=$('#id').val();
         $('#name1').html("");
@@ -76,6 +81,7 @@ $(document).ready(function(){
                 price:price,
                 category:category,
                 qty:qty,
+                branch:branch,
             },
             success:function(data)
             {
@@ -92,6 +98,9 @@ $(document).ready(function(){
                     }
                     if(data.errors.qty){
                         $( '#qty_error1' ).html( data.errors.qty[0] );
+                    }
+                    if(data.errors.branch){
+                        $( '#branch_error1' ).html( data.errors.branch[0] );
                     }
 
                 }
@@ -162,6 +171,8 @@ function editItem(id)
             $('#name1').val(data.name);
             $('#category1 option').prop('selected',false);
             $('#category1 option[value="'+data.category_id+'"]' ).prop('selected','selected');
+            $('#branch1 option').prop('selected',false);
+            $('#branch1 option[value="'+data.branch_id+'"]' ).prop('selected','selected');
             $('#item_edit').modal('show');
         }
     });

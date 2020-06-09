@@ -48,6 +48,20 @@
                         </select>
                     </div>
                     <span class="text-danger" id="category_error1">
+                                </span> <div class=" branch1 branch_div mb-3 row fs-select4 {{$errors->has('branch') ? 'has:error':''}}">
+                        <label for="#role" class="w-25" style="padding-left: 16px;">Branch</label>
+                        <select name="branch" class="form-control-sm show-menu-arrow  margin-left-mount bd-bottom-mount col-md-7" data-width="300px" id="branch1" style="background:none;border-top:0;border-left:0;border-right:0;border-bottom: 0;">
+                            {{--                            <option selected disabled>--None--</option>--}}
+                            @php
+                                $branches=\App\Model\Branch::all();
+                            @endphp
+                            @foreach($branches as $branch)
+                                <option value="{{$branch->id}}">{{$branch->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <span class="text-danger">
+                                    <strong id="branch-error1"></strong>
                                 </span>
                     <div class="m-button pt-3">
                         {{--                        <button type="button" class="btn btn-nb-mount2 px-3 pt-0 pb-0 mr-4 shadow-0 fontsize-mount22" data-dismiss="modal">Cancel</button>--}}

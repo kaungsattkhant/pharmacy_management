@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //Route::get('/',function (){
 //    return view('StaffAuth.staff_index');
 //});
-Route::group(['middleware'=>['staff.auth']],function() {
+Route::group(['middleware'=>['admin']],function() {
     Route::group(['namespace'=>'Web'],function() {
         Route::group(['prefix'=>'staff'],function(){
             Route::get('/','StaffController@index');
@@ -53,7 +53,21 @@ Route::group(['middleware'=>['staff.auth']],function() {
             Route::post('destroy','CategoryController@destroy');
         });
     });
-
+});
+Route::group(['middleware'=>['frontman']],function() {
+    Route::group(['namespace' => 'Web'], function () {
+        Route::group(['prefix'=>'sale'],function(){
+            Route::get('/','SaleController@index');
+            Route::post('/store','CategoryController@store');
+            Route::get('{id}/edit','CategoryController@edit');
+            Route::post('update','CategoryController@update');
+            Route::post('destroy','CategoryController@destroy');
+        });
+        Route::group(['prefix'=>'pos'],function(){
+            Route::get('/','POSController@index');
+            Route::get('get_item_name','POSController@get_item_name');
+        });
+    });
 });
 Route::group(['namespace'=>'Web'],function() {
 //    Route::get('/','StaffController@index');

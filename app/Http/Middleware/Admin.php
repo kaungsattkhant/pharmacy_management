@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
-class StaffAuth
+class Admin
 {
     /**
      * Handle an incoming request.
@@ -15,7 +16,14 @@ class StaffAuth
      */
     public function handle($request, Closure $next)
     {
-//        dd('a');
-        return $next($request);
+        if(Auth::check()){
+            if(Auth::user()->isAdmin()){
+                return $next($request);
+            }
+        }
+
+        return redirect('login');
+//        dd('login');
+//        dd(Auth::user());
     }
 }

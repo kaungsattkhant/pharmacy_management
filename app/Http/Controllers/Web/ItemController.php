@@ -20,6 +20,7 @@ class ItemController extends Controller
             'price'=>"required|integer",
             'qty'=>'required',
             'category'=>'required',
+            'branch'=>'required',
         ]);
         if($vData->passes())
         {
@@ -28,6 +29,7 @@ class ItemController extends Controller
                 'price'=>$request->price,
                 'qty'=>$request->qty,
                 'category_id'=>$request->category,
+                'branch_id'=>$request->branch,
             ]);
             return response()->json([
                 'is_success'=>true,
@@ -49,6 +51,7 @@ class ItemController extends Controller
             'price'=>"required|integer",
             'qty'=>'required|integer',
             'category'=>'required',
+            'branch'=>'required',
         ]);
         if($vData->passes()){
             Item::whereId($request->id)->update([
@@ -56,6 +59,7 @@ class ItemController extends Controller
                 'price'=>$request->price,
                 'qty'=>$request->qty,
                 'category_id'=>$request->category,
+                'branch_id'=>$request->branch,
             ]);
             return response()->json([
                 'is_success'=>true,

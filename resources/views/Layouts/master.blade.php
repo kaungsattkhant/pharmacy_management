@@ -12,15 +12,15 @@
 <body>
 {{--<p>Hello World</p>--}}
 
-<div class="main-container">
+<div class="main-container" id="app">
     @include('Layouts.side_bar')
-
     @yield('content')
 </div>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" ></script>
+{{--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" ></script>--}}
+<script src="{{asset('js/jquery.js')}}"></script>
 <script src="{{asset('js/bootstrap.js')}}"></script>
-
+<script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
 @yield('script')
 {{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>--}}
 

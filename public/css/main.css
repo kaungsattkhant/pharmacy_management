@@ -76,6 +76,22 @@ body{
 input:focus{
     outline: none;
 }
+.left-div{
+    padding:40px 0 40px 100px;
+}
+.panel-footer{
+    padding-left:63px;
+    z-index: -100;
+}
+.list-group{
+    padding-left: 40px;
+    margin-top: 0;
+}
+.list-group-item{
+    /*height: px;*/
+    background-color: lightgray;
+    padding:3px 0 0 0;
+}
 /**************************login css**********************/
 .login_body{
     background-color: navajowhite;
@@ -95,3 +111,4 @@ input:focus{
 ::placeholder {
     padding-left:60px;
 }
+
