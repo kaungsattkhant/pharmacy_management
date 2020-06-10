@@ -2022,7 +2022,9 @@ __webpack_require__.r(__webpack_exports__);
       item_list: [],
       total: '',
       errorMessage: '',
-      error: true
+      qty_error: true,
+      submit_error: true,
+      add_cart_error: true
     };
   },
   mounted: function mounted() {// console.log(this.item_list);
@@ -2043,7 +2045,12 @@ __webpack_require__.r(__webpack_exports__);
           }
         }).then(function (response) {
           // console.log(response.data);
-          _this.results = response.data.items;
+          if (response.data.is_success == true) {
+            _this.results = response.data.items;
+            _this.errorMessage = '';
+          } else {
+            _this.errorMessage = 'Somethings Wrong';
+          }
         });
       }
     },
@@ -2052,9 +2059,13 @@ __webpack_require__.r(__webpack_exports__);
       this.search = item_name;
       this.item_id = $id;
       this.price = price;
-      this.old_qty = old; // console.log(this);
+      this.old_qty = old;
+      this.qty_error = false; // console.log(this);
     },
     addItem: function addItem() {
+      this.submit_error = false;
+      this.qty_error = true;
+      this.add_cart_error = true;
       this.item_list.push({
         id: this.item_id,
         name: this.search,
@@ -2069,6 +2080,12 @@ __webpack_require__.r(__webpack_exports__);
     deleteItem: function deleteItem(items, index) {
       items.splice(index, 1);
       this.getTotal(items);
+
+      if (items.length <= 0) {
+        this.submit_error = true;
+        this.add_cart_error = true;
+        this.qty_error = true;
+      }
     },
     getTotal: function getTotal(items) {
       var total = 0;
@@ -2093,22 +2110,24 @@ __webpack_require__.r(__webpack_exports__);
 
       if (old < this.qty) {
         this.errorMessage = 'Not Enough Quantity ';
-        this.error = true;
+        this.add_cart_error = true;
+      } else if (this.qty == 0 || this.qty < 1) {
+        this.errorMessage = 'Quantity is not availiable ';
+        this.add_cart_error = true;
       } else {
         this.errorMessage = '';
-        this.error = false;
+        this.add_cart_error = false;
       }
     },
-    isDisable: function isDisable() {
-      return this.error == true;
+    isDisable: function isDisable(text) {
+      if (text == 'Submit') {
+        return this.submit_error == true;
+      } else if (text == 'Qty') {
+        return this.qty_error == true;
+      } else if (text == 'AddToCart') {
+        return this.add_cart_error == true;
+      }
     }
-  },
-  created: function created() {
-    console.log(this.item_list); // if(this.item_list.length<=0){
-    //     console.log('error');
-    // }else{
-    //     console.log('s');
-    // }
   }
 });
 
@@ -37663,7 +37682,7 @@ var render = function() {
         "button",
         {
           staticClass: " btn btn-default cs-btn",
-          attrs: { disabled: _vm.isDisable() },
+          attrs: { disabled: _vm.isDisable("Submit") },
           on: {
             click: function($event) {
               return _vm.sendData()
@@ -37721,15 +37740,17 @@ var render = function() {
           attrs: { type: "text", autocomplete: "off", name: "name" },
           domProps: { value: _vm.search },
           on: {
-            keyup: _vm.getItemName,
+            input: [
+              function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.search = $event.target.value
+              },
+              _vm.getItemName
+            ],
             focus: function($event) {
               _vm.modal = true
-            },
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.search = $event.target.value
             }
           }
         })
@@ -37780,7 +37801,12 @@ var render = function() {
           ],
           staticClass:
             "border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6",
-          attrs: { type: "number", min: "0", name: "qty" },
+          attrs: {
+            type: "number",
+            min: "0",
+            name: "qty",
+            disabled: _vm.isDisable("Qty")
+          },
           domProps: { value: _vm.qty },
           on: {
             input: [
@@ -37806,7 +37832,7 @@ var render = function() {
           {
             staticClass:
               "btn btn-nb-mount2 fontsize-mount22 px-3 col-md-4   cs-btn",
-            attrs: { disabled: _vm.isDisable() },
+            attrs: { disabled: _vm.isDisable("AddToCart") },
             on: {
               click: function($event) {
                 return _vm.addItem()

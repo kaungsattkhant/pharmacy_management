@@ -92,4 +92,77 @@ class SaleController extends Controller
         $sales=Sale::paginate(10);
         return view('Sale.sale_record',compact('sales'));
     }
+    public function sale_detail($sale_id){
+        $sale=Sale::whereid($sale_id)->firstOrfail();
+        $items=$sale->items;
+//        foreach($items->pivot as $p){
+//            dd($p);
+//        }
+        return view('Sale.detail_view',compact('items'));
+    }
+    public function sale_report(){
+
+        $branch_id=Auth::user()->branch_id;
+        $now = Carbon::now();
+        $today = $now->today();
+        $c_month = $now->month;
+        $c_year = $now->year;
+        $dayInMonth = Carbon::now()->daysInMonth;
+        $days = [];
+        $avg_sale=[];
+        for ($i = 1; $i <= $dayInMonth; $i++) {
+            $date = Carbon::parse($c_year . '-' . $c_month . '-' . $i);
+            $sale=Sale::whereDate('date_time',$date)
+                ->whereHas('staff',function ($q)use($branch_id){
+                    $q->where('branch_id',$branch_id);
+                })
+                ->get();
+            $total_sale=0;
+            foreach($sale as $s)
+            {
+                foreach($s->items as $t){
+                    $total_sale+=$t->price * $t->pivot->qty;
+                }
+            }
+            array_push($days, $i);
+            array_push($avg_sale, $total_sale);
+        }
+            return view('Sale.sale_report',compact('days','avg_sale'));
+    }
+    public function sale_report_filter(Request $request){
+        $branch_id=$request->branch;
+        $month = $request->month;
+        $year = $request->year;
+        $req_date = Carbon::parse($request->year . '-' . $request->month);
+        $dayInMonth = $req_date->daysInMonth;
+        $days = [];
+        $avg_sale=[];
+        for ($i = 1; $i <= $dayInMonth; $i++) {
+            $date = Carbon::parse($year . '-' . $month . '-' . $i);
+            $sale=Sale::whereDate('date_time',$date)
+                ->whereHas('staff',function ($q)use($branch_id){
+                    $q->where('branch_id',$branch_id);
+                })
+                ->get();
+            $total_sale=0;
+            if($sale->isNotEmpty()){
+                foreach($sale as $s)
+                {
+                    foreach($s->items as $t){
+                        $total_sale+=$t->price * $t->pivot->qty;
+                    }
+                }
+            }
+
+            array_push($days, $i);
+            array_push($avg_sale, $total_sale);
+        }
+//        dd($days);
+//        dd($avg_sale);
+        return response()->json([
+            'days' => $days,
+            'avg_sale' => $avg_sale,
+            'label'=>'Sale Average Rate',
+        ]);
+    }
 }

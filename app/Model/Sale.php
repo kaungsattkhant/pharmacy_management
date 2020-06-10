@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
-    protected $with=['staff'];
+    protected $with=['staff','items'];
     protected $fillable=['date_time','total_kyats','staff_id','invoice_no'];
     public function staff(){
         return $this->belongsTo(Staff::class);

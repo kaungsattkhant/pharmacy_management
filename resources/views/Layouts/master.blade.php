@@ -20,6 +20,8 @@
 {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" ></script>--}}
 <script src="{{asset('js/jquery.js')}}"></script>
 <script src="{{asset('js/bootstrap.js')}}"></script>
+{{--<script src="{{asset('js/bundle.js')}}"></script>--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js" charset="utf-8"></script>
 <script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
 @yield('script')
 {{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>--}}

@@ -2,7 +2,7 @@
     <div class="content  pt-3">
 <!--        <form>-->
             <div class="col-lg-12 ">
-                <button class=" btn btn-default cs-btn" @click="sendData()" :disabled="isDisable()">Done</button>
+                <button class=" btn btn-default cs-btn" @click="sendData()" :disabled="isDisable('Submit')">Done</button>
             </div>
             <div class="left-div col-lg-5 bg-light  float-left mt-5 ">
                 <div>
@@ -12,7 +12,7 @@
 
                 <div class="">
                     <label class="w-25">Name</label>
-                    <input type="text"  autocomplete="off" name="name"  v-model="search" v-on:keyup="getItemName" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6"  @focus="modal=true">
+                    <input type="text"  autocomplete="off" name="name"  v-model="search" @input="getItemName" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6"  @focus="modal=true">
                 </div>
                 <div class="panel-footer " v-if="results.length && modal">
                     <ul class="list-group ">
@@ -23,13 +23,13 @@
                                 </span>
                 <div class="mb-3 mt-3">
                     <label class="w-25">Qty</label>
-                    <input type="number" v-model="qty"  min="0" name="qty" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6" @input="checkQty()">
+                <input type="number" v-model="qty"  min="0" name="qty" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6" @input="checkQty()" :disabled="isDisable('Qty')">
                 </div>
                 <span class="text-danger" id="qty_error">
                                 </span>
                 <div class="m-button pt-3 ">
 <!--                    <button @click="addItem">Add</button>-->
-                    <button   class="btn btn-nb-mount2 fontsize-mount22 px-3 col-md-4   cs-btn"  @click="addItem()" :disabled="isDisable()">Add To Cart</button>
+                    <button   class="btn btn-nb-mount2 fontsize-mount22 px-3 col-md-4   cs-btn"  @click="addItem()" :disabled="isDisable('AddToCart')">Add To Cart</button>
                 </div>
 <!--                <ul  >-->
 <!--                    <li v-for="(t,index) in item_list" >-->
@@ -112,7 +112,9 @@
                 item_list:[],
                 total:'',
                 errorMessage:'',
-                error:true,
+                qty_error:true,
+                submit_error:true,
+                add_cart_error:true,
             }
         },
         mounted() {
@@ -131,7 +133,12 @@
                         }
                     }).then(response=>{
                         // console.log(response.data);
-                        this.results=response.data.items;
+                        if(response.data.is_success==true){
+                            this.results=response.data.items;
+                            this.errorMessage='';
+                        }else{
+                            this.errorMessage='Somethings Wrong';
+                        }
                     })
                 }
             },
@@ -141,9 +148,13 @@
                 this.item_id=$id;
                 this.price=price;
                 this.old_qty=old;
+                this.qty_error=false;
                 // console.log(this);
             },
             addItem(){
+                this.submit_error=false;
+                this.qty_error=true;
+                this.add_cart_error=true;
                     this.item_list.push({
                         id:this.item_id,
                         name:this.search,
@@ -158,6 +169,11 @@
             deleteItem(items,index){
                 items.splice(index,1);
                 this.getTotal(items);
+                if(items.length<=0){
+                    this.submit_error=true;
+                    this.add_cart_error=true;
+                    this.qty_error=true;
+                }
             },
             getTotal(items){
                 var total=0;
@@ -165,7 +181,6 @@
                     total+=parseInt(value.qty,10) * value.price;
                 });
                 this.total=total;
-
             },
             sendData(){
                 // console.log(this.item_list);
@@ -181,27 +196,32 @@
             checkQty(){
                 var old=parseInt(this.old_qty);
                 // console.log(this.item_list);
-                if(old<this.qty){
+                if(old<this.qty ){
                     this.errorMessage='Not Enough Quantity ';
-                    this.error=true;
-                }else{
+                    this.add_cart_error=true;
+                }else if(this.qty==0 || this.qty<1){
+                    this.errorMessage='Quantity is not availiable ';
+                    this.add_cart_error=true;
+                }else
+                    {
                     this.errorMessage='';
-                    this.error=false;
+                    this.add_cart_error=false;
+                }
+            },
+            isDisable(text){
+                if(text=='Submit'){
+                    return this.submit_error==true;
+
+                }else if(text=='Qty'){
+                    return this.qty_error==true;
+
+                }else if(text=='AddToCart'){
+                    return this.add_cart_error==true;
 
                 }
             },
-            isDisable(){
-                return this.error==true;
-            }
+
         },
-        created() {
-            console.log(this.item_list);
-            // if(this.item_list.length<=0){
-            //     console.log('error');
-            // }else{
-            //     console.log('s');
-            // }
-        }
 
     }
 </script>

@@ -52,6 +52,10 @@ Route::group(['middleware'=>['admin']],function() {
             Route::post('update','CategoryController@update');
             Route::post('destroy','CategoryController@destroy');
         });
+        Route::group(['prefix'=>'sale'],function() {
+            Route::get('sale_report', 'SaleController@sale_report');
+            Route::get('sale_report_filter', 'SaleController@sale_report_filter');
+        });
     });
 });
 Route::group(['middleware'=>['frontman']],function() {
@@ -61,6 +65,7 @@ Route::group(['middleware'=>['frontman']],function() {
             Route::get('get_item_name','SaleController@get_item_name');
             Route::post('create','SaleController@sale_create');
             Route::get('sale_record','SaleController@sale_record');
+            Route::get('/{id}/detail','SaleController@sale_detail');
         });
         Route::group(['prefix'=>'pos'],function(){
             Route::get('/','POSController@index');
