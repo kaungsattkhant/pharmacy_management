@@ -37,7 +37,10 @@ class SaleController extends Controller
     public function sale_create(Request $request){
         $data=json_encode($request->items);
         $decode_data=json_decode($data);
-        $latest=Sale::latest()->first();
+        $branch_id=Auth::user()->branch_id;
+        $latest=Sale::whereHas('staff',function ($q)use($branch_id){
+            $q->where('branch_id',$branch_id);
+        })->latest()->first();
         $branch=Branch::find(Auth::user()->branch_id);
         $invoice_no=$this->getInvoiceNo($branch,$latest);
         $sale=Sale::create([
@@ -92,18 +95,19 @@ class SaleController extends Controller
         return $invoice_no;
     }
     public function sale_record(Request $request){
+        $date=Carbon::today();
         if(Auth::user()->isAdmin()){
-            $sales=Sale::paginate(1);
+            $sales=Sale::whereDate('date_time',$date)->paginate(10);
         }elseif(Auth::user()->isManager()){
             $branch_id=Auth::user()->branch_id;
             $sales=Sale::whereHas('staff',function ($q)use($branch_id){
                 $q->where('branch_id',$branch_id);
-            })->paginate(1);
+            })->whereDate('date_time',$date)->paginate(10);
         }elseif(Auth::user()->isFrontMan()){
             $staff_id=Auth::user()->id;
             $sales=Sale::whereHas('staff',function ($q)use($staff_id){
                 $q->whereId($staff_id);
-            })->paginate(1);
+            })->whereDate('date_time',$date)->paginate(10);
         }
         if($request->ajax()){
             return view('Sale.sale_record_filter',compact('sales'));
@@ -180,7 +184,7 @@ class SaleController extends Controller
             return view('Sale.sale_report',compact('days','avg_sale'));
     }
     public function sale_report_filter(Request $request){
-        $branch_id=Auth::user()->branch_id;
+        $branch_id=$request->branch;
         $month = $request->month;
         $year = $request->year;
         $req_date = Carbon::parse($request->year . '-' . $request->month);
@@ -214,5 +218,56 @@ class SaleController extends Controller
             'avg_sale' => $avg_sale,
             'label'=>'Sale Average Rate',
         ]);
+    }
+    public function item_report(Request $request){
+        $branch_id=1;
+        $items=Item::orderBy('name','asc')->where('branch_id',1)->paginate(3);
+        foreach($items as $it){
+            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
+                $q->where('branch_id',$branch_id);
+            })->whereDate('date_time',Carbon::today())->get();
+            $total_sale=0;
+            $total_qty=0;
+            foreach($sales as $s){
+                foreach($s->items as $p){
+                    if($p->id== $it->id){
+                       $total_sale+= $p->price *$p->pivot->qty;
+                       $total_qty+=$p->pivot->qty;
+                    }
+                }
+            }
+            $it->sale=$total_sale;
+            $it->total_qty=$total_qty;
+        }
+        if($request->ajax()){
+            return view('Sale.item_report_filter',compact('items'));
+        }
+        return view('Sale.item_report',compact('items'));
+    }
+    public function item_report_filter(Request $request){
+
+        $branch_id=$request->branch;
+        $items=Item::orderBy('name','asc')->where('branch_id',$request->branch)->paginate(3);
+        foreach($items as $it){
+            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
+                $q->where('branch_id',$branch_id);
+            })->where(function ($q)use($request) {
+                $q->whereDate('date_time', '>=', $request->from_date)
+                    ->whereDate('date_time', '<=', $request->to_date);
+            })->get();
+            $total_sale=0;
+            $total_qty=0;
+            foreach($sales as $s){
+                foreach($s->items as $p){
+                    if($p->id== $it->id){
+                        $total_sale+= $p->price *$p->pivot->qty;
+                        $total_qty+=$p->pivot->qty;
+                    }
+                }
+            }
+            $it->sale=$total_sale;
+            $it->total_qty=$total_qty;
+        }
+        return view('Sale.item_report_filter',compact('items'));
     }
 }

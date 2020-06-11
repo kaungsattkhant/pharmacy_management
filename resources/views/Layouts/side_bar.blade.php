@@ -21,6 +21,7 @@
         <a href="{{url('/sale/sale_record')}}"><li>History</li></a>
         @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
             <a href="{{url('/sale/sale_report')}}"><li>Report</li></a>
+            <a href="{{url('/sale/item_report')}}"><li>Item Report</li></a>
         @endif
 
 

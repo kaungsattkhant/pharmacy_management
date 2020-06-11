@@ -6,7 +6,7 @@
             <div class="float-left">
                 <div class="mb-3 ">
 
-                    <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount" style="background:none;" id="staff_branch">
+                    <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount bg-white" style="background:none;" id="staff_branch">
                         <option selected disabled>--Choose Branch--</option>
                         @php
                             $branches=\App\Model\Branch::all();

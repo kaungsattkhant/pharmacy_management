@@ -57,6 +57,8 @@ Route::group(['middleware'=>['admin']],function() {
         Route::group(['prefix'=>'sale'],function() {
             Route::get('sale_report', 'SaleController@sale_report');
             Route::get('sale_report_filter', 'SaleController@sale_report_filter');
+            Route::get('item_report','SaleController@item_report');
+            Route::get('item_report_filter','SaleController@item_report_filter');
         });
     });
 });
