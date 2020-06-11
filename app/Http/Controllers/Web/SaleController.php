@@ -19,7 +19,10 @@ class SaleController extends Controller
         return view('Sale.sale_index');
     }
     public function get_item_name(Request $request){
-        $items = Item::where('name','LIKE',$request->search.'%')->get();
+        $items = Item::where('name','LIKE',$request->search.'%')
+            ->orderBy('name','asc')
+            ->where('branch_id',Auth::user()->branch_id)
+            ->get();
         if($items->isNotEmpty()){
             return response()->json([
                 'is_success'=>true,
@@ -88,9 +91,56 @@ class SaleController extends Controller
         $invoice_no="B".$last.$date.$a;
         return $invoice_no;
     }
-    public function sale_record(){
-        $sales=Sale::paginate(10);
+    public function sale_record(Request $request){
+        if(Auth::user()->isAdmin()){
+            $sales=Sale::paginate(1);
+        }elseif(Auth::user()->isManager()){
+            $branch_id=Auth::user()->branch_id;
+            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
+                $q->where('branch_id',$branch_id);
+            })->paginate(1);
+        }elseif(Auth::user()->isFrontMan()){
+            $staff_id=Auth::user()->id;
+            $sales=Sale::whereHas('staff',function ($q)use($staff_id){
+                $q->whereId($staff_id);
+            })->paginate(1);
+        }
+        if($request->ajax()){
+            return view('Sale.sale_record_filter',compact('sales'));
+        }
         return view('Sale.sale_record',compact('sales'));
+    }
+    public function sale_record_filter(Request $request){
+        if($request->branch){
+            $branch_id=$request->branch;
+        }else{
+            $branch_id=Auth::user()->branch_id;
+        }
+        if(Auth::user()->isAdmin()){
+            $sales=Sale::where(function ($q)use($request) {
+                $q->whereDate('date_time', '>=', $request->from_date)
+                    ->whereDate('date_time', '<=', $request->to_date);
+            })->whereHas('staff',function ($q)use($branch_id){
+                $q->where('branch_id',$branch_id);
+            })->paginate(1);
+        }elseif(Auth::user()->isManager()){
+            $branch_id=Auth::user()->branch_id;
+            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
+                $q->where('branch_id',$branch_id);
+            })->where(function ($q)use($request) {
+                    $q->whereDate('date_time', '>=', $request->from_date)
+                        ->whereDate('date_time', '<=', $request->to_date);
+                })->paginate(1);
+        }elseif(Auth::user()->isFrontMan()){
+            $staff_id=Auth::user()->id;
+            $sales=Sale::whereHas('staff',function ($q)use($staff_id){
+                $q->whereId($staff_id);
+            })->where(function ($q)use($request) {
+                $q->whereDate('date_time', '>=', $request->from_date)
+                    ->whereDate('date_time', '<=', $request->to_date);
+            })->paginate(1);
+        }
+            return view('Sale.sale_record_filter',compact('sales'));
     }
     public function sale_detail($sale_id){
         $sale=Sale::whereid($sale_id)->firstOrfail();
@@ -130,7 +180,7 @@ class SaleController extends Controller
             return view('Sale.sale_report',compact('days','avg_sale'));
     }
     public function sale_report_filter(Request $request){
-        $branch_id=$request->branch;
+        $branch_id=Auth::user()->branch_id;
         $month = $request->month;
         $year = $request->year;
         $req_date = Carbon::parse($request->year . '-' . $request->month);

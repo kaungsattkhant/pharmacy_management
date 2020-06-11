@@ -5,13 +5,25 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Model\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class StaffController extends Controller
 {
-    public function index(){
-        $staff=Staff::all();
+    public function index(Request $request){
+        if(Auth::user()->isAdmin()){
+            $staff=Staff::paginate(1);
+        }elseif(Auth::user()->isManager()){
+            $staff=Staff::where('branch_id',Auth::user()->branch_id)->paginate(1);
+        }
+        if($request->ajax()){
+            return view('Staff.staff_index_filter',compact('staff'));
+        }
         return view('Staff.staff_index',compact('staff'));
+    }
+    public function index_filter(Request $request){
+        $staff=Staff::where('branch_id',$request->branch)->paginate(1);
+        return view('Staff.staff_index_filter',compact('staff'));
     }
     public function store(Request $request){
         $vData=Validator::make($request->all(),[
@@ -38,7 +50,8 @@ class StaffController extends Controller
         }
         return response()->json([
             'errors'=>$vData->errors(),
-        ]);    }
+        ]);
+    }
     public function edit($id){
         $staff=Staff::find($id);
         return $staff;

@@ -33,4 +33,13 @@ class Staff extends Authenticable
             }
         }
     }
+    public function isManager(){
+        foreach ($this->role()->get() as $role)
+        {
+            if ($role->name == 'Manager')
+            {
+                return true;
+            }
+        }
+    }
 }

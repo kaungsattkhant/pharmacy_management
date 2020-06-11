@@ -25,9 +25,10 @@ class LoginController extends Controller
         ])) {
             if(Auth::user()->isAdmin()){
                 return redirect()->intended('staff');
-
             }elseif(Auth::user()->isFrontMan()){
                 return redirect()->intended('sale');
+            }elseif(Auth::user()->isManager()){
+                return redirect()->intended('item');
             }
         }
         return redirect('login');

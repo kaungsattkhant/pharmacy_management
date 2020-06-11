@@ -4,9 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use const http\Client\Curl\AUTH_ANY;
 
-class FrontMan
+class Manager
 {
     /**
      * Handle an incoming request.
@@ -17,14 +16,11 @@ class FrontMan
      */
     public function handle($request, Closure $next)
     {
-//        dd(Auth::guard('web'));
         if(Auth::check()){
-            if(Auth::user()->isFrontMan() || Auth::user()->isAdmin() || Auth::user()->isManager()){
+            if(Auth::user()->isManager() || Auth::user()->isAdmin()){
                 return $next($request);
 
             }
         }
-
-        return redirect('login');
     }
 }

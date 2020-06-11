@@ -21,13 +21,15 @@ use Illuminate\Support\Facades\Route;
 //});
 Route::group(['middleware'=>['admin']],function() {
     Route::group(['namespace'=>'Web'],function() {
-        Route::group(['prefix'=>'staff'],function(){
-            Route::get('/','StaffController@index');
-            Route::post('/store','StaffController@store');
-            Route::get('{id}/edit','StaffController@edit');
-            Route::post('update','StaffController@update');
-            Route::post('destroy','StaffController@destroy');
-        });
+//        Route::group(['prefix'=>'staff'],function(){
+//            Route::get('/','StaffController@index');
+//            Route::post('/store','StaffController@store');
+//            Route::get('{id}/edit','StaffController@edit');
+//            Route::post('update','StaffController@update');
+//            Route::post('destroy','StaffController@destroy');
+//            Route::get('staff_filter','StaffController@index_filter');
+//
+//        });
         Route::group(['prefix'=>'branch'],function(){
             Route::get('/','BranchController@index');
             Route::post('/store','BranchController@store');
@@ -36,15 +38,15 @@ Route::group(['middleware'=>['admin']],function() {
             Route::post('destroy','BranchController@destroy');
 
         });
-        Route::group(['prefix'=>'item'],function(){
-            Route::get('/','ItemController@index');
-            Route::post('/store','ItemController@store');
-            Route::get('{id}/edit','ItemController@edit');
-            Route::post('update','ItemController@update');
-            Route::post('destroy','ItemController@destroy');
-            Route::post('add_qty','ItemController@item_add_qty');
-            Route::get('search','ItemController@search');
-        });
+//        Route::group(['prefix'=>'item'],function(){
+//            Route::get('/','ItemController@index');
+//            Route::post('/store','ItemController@store');
+//            Route::get('{id}/edit','ItemController@edit');
+//            Route::post('update','ItemController@update');
+//            Route::post('destroy','ItemController@destroy');
+//            Route::post('add_qty','ItemController@item_add_qty');
+//            Route::get('search','ItemController@search');
+//        });
         Route::group(['prefix'=>'category'],function(){
             Route::get('/','CategoryController@index');
             Route::post('/store','CategoryController@store');
@@ -58,6 +60,29 @@ Route::group(['middleware'=>['admin']],function() {
         });
     });
 });
+Route::group(['middleware'=>['manager']],function() {
+    Route::group(['namespace' => 'Web'], function () {
+        Route::group(['prefix'=>'staff'],function(){
+            Route::get('/','StaffController@index');
+            Route::post('/store','StaffController@store');
+            Route::get('{id}/edit','StaffController@edit');
+            Route::post('update','StaffController@update');
+            Route::post('destroy','StaffController@destroy');
+            Route::get('staff_filter','StaffController@index_filter');
+
+        });
+        Route::group(['prefix'=>'item'],function(){
+            Route::get('/','ItemController@index');
+            Route::post('/store','ItemController@store');
+            Route::get('{id}/edit','ItemController@edit');
+            Route::post('update','ItemController@update');
+            Route::post('destroy','ItemController@destroy');
+            Route::post('add_qty','ItemController@item_add_qty');
+            Route::get('search','ItemController@search');
+            Route::get('item_filter','ItemController@index_filter');
+        });
+    });
+});
 Route::group(['middleware'=>['frontman']],function() {
     Route::group(['namespace' => 'Web'], function () {
         Route::group(['prefix'=>'sale'],function(){
@@ -65,13 +90,21 @@ Route::group(['middleware'=>['frontman']],function() {
             Route::get('get_item_name','SaleController@get_item_name');
             Route::post('create','SaleController@sale_create');
             Route::get('sale_record','SaleController@sale_record');
+            Route::get('sale_record_filter','SaleController@sale_record_filter');
             Route::get('/{id}/detail','SaleController@sale_detail');
         });
-        Route::group(['prefix'=>'pos'],function(){
-            Route::get('/','POSController@index');
-            Route::get('get_item_name','POSController@get_item_name');
-//            Route::post('create','POSController@sale_create');
+        Route::group(['prefix'=>'customer'],function(){
+            Route::get('/','CustomerController@index');
+            Route::post('/store','CustomerController@store');
+            Route::get('{id}/edit','CustomerController@edit');
+            Route::post('update','CustomerController@update');
+            Route::post('destroy','CustomerController@destroy');
         });
+//        Route::group(['prefix'=>'pos'],function(){
+//            Route::get('/','POSController@index');
+//            Route::get('get_item_name','POSController@get_item_name');
+//        });
+
     });
 });
 Route::group(['namespace'=>'Web'],function() {

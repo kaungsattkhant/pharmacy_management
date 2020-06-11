@@ -9,18 +9,17 @@ $(document).ready(function(){
 
     $('#editMessage').hide();
     $('#createMessage').hide();
-    // $('div .role_branch_filter').on('change',function () {
-    //     var id=$(this).val();
-    //     if(id==1)
-    //     {
-    //         // console.log('alert');
-    //         $('.branch_div').fadeOut();
-    //     }
-    //     else
-    //     {
-    //         $('.branch_div').fadeIn();
-    //     }
-    // });
+    $('div .role_branch_filter').on('change',function () {
+        var id=$(this).val();
+        if(id==1)
+        {
+            $('.branch_div').fadeOut();
+        }
+        else
+        {
+            $('.branch_div').fadeIn();
+        }
+    });
 
     $('#staffSubmit').click( function(event) {
         var password = $('#password').val();
@@ -28,8 +27,8 @@ $(document).ready(function(){
         var email=$('#email').val();
         var name=$('#name').val();
         var role=$('#role').val();
-        var branch=$('#branch').val();
-        // role===1 ? branch=null :branch=$('#b').val();
+        // var branch=$('#branch').val();
+        role===1 ? branch=null :branch=$('#b').val();
         event.preventDefault();
         $.ajax({
             url:'/staff/store',
@@ -82,8 +81,8 @@ $(document).ready(function(){
         var email = $("#email1").val();
         var name = $("#name1").val();
         var role=$('#role1').val();
-        var branch=$('#branch1').val();
-        // role==1 ? branch=null :branch=$('#branch1').val();
+        // var branch=$('#branch1').val();
+        role==1 ? branch=null :branch=$('#branch1').val();
         var id=$('#id').val();
         $('#phone_number-error1').html("");
         $('#name1').html("");
@@ -130,7 +129,61 @@ $(document).ready(function(){
             },
         });
     });
-
+    $('#staff_branch').click(function () {
+        var branch_id=this.value;
+        if (branch_id != null) {
+            $.ajax({
+                url: '/staff/staff_filter',
+                type: 'get',
+                data: {
+                    branch:branch_id
+                },
+                success: function (response) {
+                    // console.log(response);
+                    $('#staff_filter').html(response);
+                }
+            });
+        } else {
+            alert('Empty');
+        }
+    });
+    $(document).on('click', '.pagination a', function(event){
+        event.preventDefault();
+        var page = $(this).attr('href').split('page=')[1];
+        // var check_from_date=$('.from_date').datepicker('getDate');
+        // var check_to_date=$('.to_date').datepicker('getDate');
+        var branch_id=$('#staff_branch').val();
+        if(branch_id!=null){
+            filter(page);
+        }else{
+            fetch_data(page);
+        }
+    });
+    function filter(page) {
+        var branch_id=$('#staff_branch').val();
+        $.ajax({
+            url:'/staff/staff_filter?page='+page,
+            type:'get',
+            data:{
+                branch:branch_id,
+            },
+            success:function (response) {
+                console.log(response);
+                $('#staff_filter').html(response);
+            }
+        });
+    }
+    function fetch_data(page)
+    {
+        $.ajax({
+            url:"/staff?page="+page,
+            type:'get',
+            success:function(data)
+            {
+                $('#staff_filter').html(data);
+            }
+        });
+    }
     // $('#admin_changePass').click(function(event){
     //     var id=$('#changePasswordId').val();
     //     var password=$('#password2').val();
@@ -178,6 +231,11 @@ function editStaff(id)
         data: "get",
         dataType: "json",
         success: function (data) {
+            if(data.role_id==1){
+                $('.branch1').hide();
+            }else{
+                $('.branch1').show();
+            }
             $('#id').val(data.id);
             $('#email1').val(data.email);
             $('#name1').val(data.name);

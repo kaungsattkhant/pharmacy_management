@@ -5,15 +5,15 @@
         <div class="sub-content pt-4 mt-3">
             <div class="float-left">
                 <div class="mb-3 ">
-                    <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount" style="background:none;" id="branch">
-                        <option selected disabled>--Choose Branch--</option>
-                        @php
-                            $branches=\App\Model\Branch::all();
-                        @endphp
-                        @foreach($branches as $branch)
-                            <option value="{{$branch->id}}">{{$branch->name}}</option>
-                        @endforeach
-                    </select>
+{{--                    <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount" style="background:none;" id="branch">--}}
+{{--                        <option selected disabled>--Choose Branch--</option>--}}
+{{--                        @php--}}
+{{--                            $branches=\App\Model\Branch::all();--}}
+{{--                        @endphp--}}
+{{--                        @foreach($branches as $branch)--}}
+{{--                            <option value="{{$branch->id}}">{{$branch->name}}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
                     <select class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount" name="month" data-style="btn-white"  style="background:none;"  id="month_filter">
                         @php
                             $months=['Jan','Feb','Mar','Apr','May','Jun','July','Aug','Sept','Oct','Nov','Dec'];
@@ -121,8 +121,8 @@
             });
             // **************************chart_filter******************
             $('#sale_report_filter').click(function () {
-                var branch=$('#branch').val();
-                if(branch!=null){
+                // var branch=$('#branch').val();
+                // if(branch!=null){
                     var month=$('#month_filter').val();
                     var year=$('#year_filter').val();
                     // var rate_type=$('#rate_type').val();
@@ -130,7 +130,7 @@
                         url:'/sale/sale_report_filter',
                         type:'get',
                         data:{
-                            branch:branch,
+                            // branch:branch,
                             month:month,
                             year:year,
                         },
@@ -147,9 +147,9 @@
                             // console.log('success');
                         }
                     });
-                }else{
-                    alert('Choose Branch');
-                }
+                // }else{
+                //     alert('Choose Branch');
+                // }
 
             });
 

@@ -14,9 +14,9 @@
                     <label class="w-25">Name</label>
                     <input type="text"  autocomplete="off" name="name"  v-model="search" @input="getItemName" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6"  @focus="modal=true">
                 </div>
-                <div class="panel-footer " v-if="results.length && modal">
-                    <ul class="list-group ">
-                        <li class="list-group-item col-md-8" v-for="result in results" @click="selectItem(result.id,result.name,result.price,result.qty)">{{ result.name }}</li>
+                <div class="panel-footer col-md-8" v-if="results.length && modal">
+                    <ul class="list-group"  >
+                        <li class="list-group-item" v-for="result in results" @click="selectItem(result.id,result.name,result.price,result.qty)">{{ result.name }}</li>
                     </ul>
                 </div>
                 <span class="text-danger" id="name_error">

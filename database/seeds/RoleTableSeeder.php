@@ -15,6 +15,9 @@ class RoleTableSeeder extends Seeder
             'name'=>'Admin',
         ]);
         \App\Model\Role::create([
+            'name'=>'Manager',
+        ]);
+        \App\Model\Role::create([
             'name'=>'FrontMan',
         ]);
     }

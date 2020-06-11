@@ -118,6 +118,65 @@ $(document).ready(function(){
         });
     });
 
+    $('#item_branch').click(function () {
+        var branch_id=this.value;
+        // var check_from_date = $('.from_date').datepicker('getDate');
+        // var check_to_date = $('.to_date').datepicker('getDate');
+        if (branch_id != null) {
+            $.ajax({
+                url: '/item/item_filter',
+                type: 'get',
+                data: {
+                    branch:branch_id
+                },
+                success: function (response) {
+                    // console.log(response);
+                    $('#item_filter').html(response);
+                }
+            });
+        } else {
+            alert('Empty');
+        }
+    });
+    $(document).on('click', '.pagination a', function(event){
+        event.preventDefault();
+        var page = $(this).attr('href').split('page=')[1];
+        // var check_from_date=$('.from_date').datepicker('getDate');
+        // var check_to_date=$('.to_date').datepicker('getDate');
+        var branch_id=$('#item_branch').val();
+        if(branch_id!=null){
+            filter(page);
+        }else{
+            fetch_data(page);
+        }
+    });
+    function filter(page) {
+        var branch_id=$('#item_branch').val();
+        $.ajax({
+            url:'/item/item_filter?page='+page,
+            type:'get',
+            data:{
+               branch:branch_id,
+            },
+            success:function (response) {
+                console.log(response);
+                $('#item_filter').html(response);
+            }
+        });
+    }
+    function fetch_data(page)
+    {
+        $.ajax({
+            url:"/item?page="+page,
+            type:'get',
+            success:function(data)
+            {
+                $('#item_filter').html(data);
+            }
+        });
+    }
+
+
     // $('#admin_changePass').click(function(event){
     //     var id=$('#changePasswordId').val();
     //     var password=$('#password2').val();
@@ -177,7 +236,6 @@ function editItem(id)
         }
     });
 }
-
 function destroyItem($id) {
     $('#delete_id').val($id);
     $('#item_destroy').modal('show');

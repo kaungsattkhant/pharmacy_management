@@ -19,7 +19,7 @@
                 </div>
                 <form action="{{url('login')}}" method="post">
                     @csrf
-                    <div class="mb-4 pb-2 ">
+                    <div class="mb-4 pb-2 login">
                         {{-- <label for="#name123" class="w-25">Name</label>--}}
                         <input type="text" autocomplete="off" placeholder=" email" name="email" class="" style="border-radius: 10px">
                         {{--<input type="number" id="price"  min="0" name="price" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input">--}}
@@ -27,7 +27,7 @@
                     </div>
                     <span class="text-danger" id="name_error">
                                 </span>
-                    <div class="mb-3 pb-3">
+                    <div class="mb-3 pb-3 login">
                         <input type="password"  name="password" placeholder=" password" style="border-radius: 10px">
                     </div>
                     <div class="ml-lg-5 pl-1">

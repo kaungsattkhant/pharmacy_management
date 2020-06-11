@@ -9,9 +9,16 @@ use Illuminate\Support\Facades\Validator;
 
 class ItemController extends Controller
 {
-    public function index(){
-        $items=Item::paginate(10);
+    public function index(Request $request){
+        $items=Item::orderBy('name','asc')->paginate(10);
+        if($request->ajax()){
+            return view('Item.item_index_filter',compact('items'));
+        }
         return view('Item.item_index',compact('items'));
+    }
+    public function index_filter(Request $request){
+        $items=Item::where('branch_id',$request->branch)->orderBy('name','asc')->paginate(10);
+        return view('Item.item_index_filter',compact('items'));
     }
     public function store(Request $request){
 //        dd($request->all());
@@ -24,12 +31,15 @@ class ItemController extends Controller
         ]);
         if($vData->passes())
         {
-            Item::create([
-                'name'=>$request->name,
+            Item::firstOrCreate(['name'=>$request->name,
+                    'branch_id'=>$request->branch,
+                    ],
+                [
+//                'name'=>$request->name,
                 'price'=>$request->price,
                 'qty'=>$request->qty,
                 'category_id'=>$request->category,
-                'branch_id'=>$request->branch,
+//                'branch_id'=>$request->branch,
             ]);
             return response()->json([
                 'is_success'=>true,
