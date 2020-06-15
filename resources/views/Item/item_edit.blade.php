@@ -34,7 +34,12 @@
                     </div>
                     <span class="text-danger" id="qty_error1">
                                 </span>
-
+                    <div class="mb-3 ">
+                        <label for="#name123" class="w-25">Expire Date</label>
+                        <input type="text" id="expire_date1" autocomplete="off" name="name" class="date_picker border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-7">
+                    </div>
+                    <span class="text-danger" id="expire_date_error1">
+                                </span>
                     <div class=" mb-3 row fs-select4 {{$errors->has('category') ? 'has:error':''}}" >
                         <label for="#role" class="w-25" style="padding-left: 16px;">Category</label>
                         <select name="category" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount border-top-0 col-md-7" style="background:none;border-top:0;border-left:0;border-right:0;border-bottom: 0;"  id="category1">

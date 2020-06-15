@@ -34,9 +34,7 @@
                     </select>
                     <button class="btn btn-default cs-btn btn-sm" id="sale_report_filter">Filter</button>
                 </div>
-
             </div>
-
         </div>
         <div class="pt-4 mt-auto">
 {{--            <div class="row">--}}

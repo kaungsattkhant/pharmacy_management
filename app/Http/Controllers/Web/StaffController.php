@@ -12,9 +12,9 @@ class StaffController extends Controller
 {
     public function index(Request $request){
         if(Auth::user()->isAdmin()){
-            $staff=Staff::paginate(1);
+            $staff=Staff::paginate(10);
         }elseif(Auth::user()->isManager()){
-            $staff=Staff::where('branch_id',Auth::user()->branch_id)->paginate(1);
+            $staff=Staff::where('branch_id',Auth::user()->branch_id)->paginate(10);
         }
         if($request->ajax()){
             return view('Staff.staff_index_filter',compact('staff'));
@@ -22,7 +22,7 @@ class StaffController extends Controller
         return view('Staff.staff_index',compact('staff'));
     }
     public function index_filter(Request $request){
-        $staff=Staff::where('branch_id',$request->branch)->paginate(1);
+        $staff=Staff::where('branch_id',$request->branch)->paginate(10);
         return view('Staff.staff_index_filter',compact('staff'));
     }
     public function store(Request $request){

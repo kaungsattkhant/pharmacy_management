@@ -1,7 +1,6 @@
 $(function () {
     $('#sale_record_filter').click(function () {
         var branch_id=$('#sale_branch').val();
-        alert(branch_id);
         var check_from_date = $('.from_date').datepicker('getDate');
         var check_to_date = $('.to_date').datepicker('getDate');
         if(typeof branch_id ==="undefined"){
@@ -46,8 +45,6 @@ $(function () {
         }else{
             alert('Please Choose Branch');
         }
-
-
     });
     $(document).on('click', '.pagination a', function(event){
         event.preventDefault();

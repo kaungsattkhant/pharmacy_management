@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{asset('css/bootstrap.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('css/main.css')}}">
+
     {{--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
 </head>
 <body>
@@ -24,8 +25,11 @@
 <script src="{{asset('js/jquery.js')}}"></script>
 <script src="{{asset('js/jqueryui.min.js')}}"></script>
 <script src="{{asset('js/bootstrap.js')}}"></script>
+<script src="{{asset('js/fontawesome.js')}}"></script>
+<script src="{{asset('js/chart.js')}}"></script>
+{{--<script src="https://kit.fontawesome.com/a076d05399.js"></script>--}}
 {{--<script src="{{asset('js/bundle.js')}}"></script>--}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js" charset="utf-8"></script>
+{{--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.js" charset="utf-8"></script>--}}
 {{--<script src="{{ asset('js/app.js') . '?' .rand(0,99999) }}" defer></script>--}}
 <script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
 @yield('script')
@@ -46,6 +50,17 @@
             duration:'slow',
         });
         $('#to_datepicker').datepicker({
+            // altFormat:"dd-mm-YY",
+            dateFormat:'yy-mm-dd',
+            changeYear:true,
+            changeMonth:true,
+            // showButtonPanel: true,
+            autoSize: true,
+            hideIfNoPrevNext: true,
+            yearRange: "1960:2030",
+            duration:'slow',
+        });
+        $('.date_picker').datepicker({
             // altFormat:"dd-mm-YY",
             dateFormat:'yy-mm-dd',
             changeYear:true,

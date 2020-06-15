@@ -16,11 +16,14 @@ class CreateCustomersTable extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->char('name',120);
-            $table->char('email',120);
-            $table->char('phone_number',25);
+            $table->char('email',120)->unique();
+            $table->char('phone_number',25)->unique();
             $table->integer('pulse_rate');
             $table->char('blood_pressure');
+            $table->date('date_time');
+            $table->char('nrc')->unique();
             $table->longText('address');
+            $table->longText('special_note')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();

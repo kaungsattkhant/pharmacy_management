@@ -13,6 +13,7 @@ $(document).ready(function(){
         var price=$('#price').val();
         var category=$('#category').val();
         var qty=$('#qty').val();
+        var expire_date=$('#expire_date').val();
         var branch=$('#branch').val();
         // role===1 ? branch=null :branch=$('#b').val();
         event.preventDefault();
@@ -25,6 +26,7 @@ $(document).ready(function(){
                 category:category,
                 qty:qty,
                 branch:branch,
+                expire_date:expire_date,
             },
             success:function(data)
             {
@@ -46,7 +48,9 @@ $(document).ready(function(){
                     if(data.errors.branch){
                         $( '#branch_error' ).html( data.errors.branch[0] );
                     }
-
+                    if(data.errors.expire_date){
+                        $( '#expire_date_error' ).html( data.errors.expire_date[0] );
+                    }
                 }
                 if(data.is_success==true)
                 {
@@ -66,6 +70,7 @@ $(document).ready(function(){
         var category=$('#category1').val();
         var qty=$('#qty1').val();
         var branch=$('#branch1').val();
+        var expire_date=$('#expire_date1').val();
         // role==1 ? branch=null :branch=$('#branch1').val();
         var id=$('#id').val();
         $('#name1').html("");
@@ -82,6 +87,7 @@ $(document).ready(function(){
                 category:category,
                 qty:qty,
                 branch:branch,
+                expire_date:expire_date,
             },
             success:function(data)
             {
@@ -102,6 +108,9 @@ $(document).ready(function(){
                     if(data.errors.branch){
                         $( '#branch_error1' ).html( data.errors.branch[0] );
                     }
+                    if(data.errors.expire_date){
+                        $( '#expire_date_error1' ).html( data.errors.expire_date[0] );
+                    }
 
                 }
                 if(data.is_success==true)
@@ -118,8 +127,9 @@ $(document).ready(function(){
         });
     });
 
-    $('#item_branch').click(function () {
-        var branch_id=this.value;
+    $('#item_index_filter').click(function () {
+        var branch_id=$('#item_branch').val();
+        var sort_by=$('#sort_by').val();
         // var check_from_date = $('.from_date').datepicker('getDate');
         // var check_to_date = $('.to_date').datepicker('getDate');
         if (branch_id != null) {
@@ -127,7 +137,8 @@ $(document).ready(function(){
                 url: '/item/item_filter',
                 type: 'get',
                 data: {
-                    branch:branch_id
+                    branch:branch_id,
+                    sort_by:sort_by,
                 },
                 success: function (response) {
                     // console.log(response);
@@ -152,11 +163,13 @@ $(document).ready(function(){
     });
     function filter(page) {
         var branch_id=$('#item_branch').val();
+        var sort_by=$('#sort_by').val();
         $.ajax({
             url:'/item/item_filter?page='+page,
             type:'get',
             data:{
                branch:branch_id,
+                sort_by:sort_by,
             },
             success:function (response) {
                 console.log(response);
@@ -228,6 +241,7 @@ function editItem(id)
             $('#price1').val(data.price);
             $('#qty1').val(data.qty);
             $('#name1').val(data.name);
+            $('#expire_date1').val(data.expire_date);
             $('#category1 option').prop('selected',false);
             $('#category1 option[value="'+data.category_id+'"]' ).prop('selected','selected');
             $('#branch1 option').prop('selected',false);

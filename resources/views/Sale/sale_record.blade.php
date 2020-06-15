@@ -5,6 +5,8 @@
         <div class="sub-content pt-4 mt-3">
             <div class="float-left">
                 <div class="mb-3 ">
+                    <form action="{{url('sale/sale_record_export')}}" method="post">
+                        @csrf
                             @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())
                                 <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount bg-white" style="background:none;" id="sale_branch">
                                     <option selected disabled>--Choose Branch--</option>
@@ -24,8 +26,11 @@
                                 <span class="field">To:</span>
                                 <input type="text" id="to_datepicker" autocomplete="off" style=""  name="to_date" class=" to_date border-top-0 border-right-0 border-left-0  dtpick-input2 col-md-8" placeholder="YY-MM-DD">
                             </label>
-                            <button  class="btn btn-default fontsize-mount cs-btn btn-sm"  id="sale_record_filter">Filter</button>
+                                <a  class="btn btn-default fontsize-mount cs-btn btn-sm"  style="color: white;" id="sale_record_filter">Filter</a>
+                            <button  class="btn btn-p fontsize-mount cs-btn btn-sm" style="background: darkcyan"  id="sale_record_export">export</button>
 {{--                        </div>--}}
+                    </form>
+
                 </div>
             </div>
 {{--            <div class="float-right">--}}

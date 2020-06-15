@@ -93,7 +93,9 @@ Route::group(['middleware'=>['frontman']],function() {
             Route::post('create','SaleController@sale_create');
             Route::get('sale_record','SaleController@sale_record');
             Route::get('sale_record_filter','SaleController@sale_record_filter');
+            Route::post('sale_record_export','SaleController@sale_record_filter')->name('sale_record_export');
             Route::get('/{id}/detail','SaleController@sale_detail');
+            Route::get('print_pdf','SaleController@pdf');
         });
         Route::group(['prefix'=>'customer'],function(){
             Route::get('/','CustomerController@index');
@@ -101,6 +103,7 @@ Route::group(['middleware'=>['frontman']],function() {
             Route::get('{id}/edit','CustomerController@edit');
             Route::post('update','CustomerController@update');
             Route::post('destroy','CustomerController@destroy');
+            Route::get('search','CustomerController@search');
         });
 //        Route::group(['prefix'=>'pos'],function(){
 //            Route::get('/','POSController@index');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Exports\SaleRecordExport;
+use App\Exports\InvoiceExport;
 use App\Http\Controllers\Controller;
 use App\Model\Branch;
 use App\Model\Item;
@@ -9,9 +11,14 @@ use App\Model\Sale;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
+use App\Traits\Sale\SaleRecord;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class SaleController extends Controller
 {
+    use SaleRecord;
 //    public function index(){
 //        return view('Sale.sale_index');
 //    }
@@ -115,37 +122,33 @@ class SaleController extends Controller
         return view('Sale.sale_record',compact('sales'));
     }
     public function sale_record_filter(Request $request){
+        $route_name=$request->route()->getName();
         if($request->branch){
             $branch_id=$request->branch;
         }else{
             $branch_id=Auth::user()->branch_id;
         }
-        if(Auth::user()->isAdmin()){
-            $sales=Sale::where(function ($q)use($request) {
-                $q->whereDate('date_time', '>=', $request->from_date)
-                    ->whereDate('date_time', '<=', $request->to_date);
-            })->whereHas('staff',function ($q)use($branch_id){
-                $q->where('branch_id',$branch_id);
-            })->paginate(1);
-        }elseif(Auth::user()->isManager()){
-            $branch_id=Auth::user()->branch_id;
-            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
-                $q->where('branch_id',$branch_id);
-            })->where(function ($q)use($request) {
-                    $q->whereDate('date_time', '>=', $request->from_date)
-                        ->whereDate('date_time', '<=', $request->to_date);
-                })->paginate(1);
-        }elseif(Auth::user()->isFrontMan()){
-            $staff_id=Auth::user()->id;
-            $sales=Sale::whereHas('staff',function ($q)use($staff_id){
-                $q->whereId($staff_id);
-            })->where(function ($q)use($request) {
-                $q->whereDate('date_time', '>=', $request->from_date)
-                    ->whereDate('date_time', '<=', $request->to_date);
-            })->paginate(1);
+        if($route_name=='sale_record_export'){
+            $vd=$request->validate([
+                'from_date'=>'required',
+                'to_date'=>'required',
+            ]);
+            $sales=$this->invoice_export($request,$branch_id);
+            if($sales!=null){
+                return Excel::download(new InvoiceExport($sales), 'sales.xlsx');
+            }
+            else{
+                $sales=Sale::paginate(10);
+                return view('Sale.sale_record',compact('sales'));
+            }
+
+        }else{
+            $sales=$this->sale_filter_trait($request,$branch_id);
         }
+
             return view('Sale.sale_record_filter',compact('sales'));
     }
+
     public function sale_detail($sale_id){
         $sale=Sale::whereid($sale_id)->firstOrfail();
         $items=$sale->items;
@@ -155,8 +158,9 @@ class SaleController extends Controller
         return view('Sale.detail_view',compact('items'));
     }
     public function sale_report(){
-
-        $branch_id=Auth::user()->branch_id;
+        if(Auth::user()->isAdmin()){
+            $branch_id=1;
+        }
         $now = Carbon::now();
         $today = $now->today();
         $c_month = $now->month;
@@ -269,5 +273,20 @@ class SaleController extends Controller
             $it->total_qty=$total_qty;
         }
         return view('Sale.item_report_filter',compact('items'));
+    }
+    public function pdf(Request $request){
+//        $invoice_no=$request->invoice_no;
+        $invoice_no="B11206202000001";
+        $sale=Sale::where('invoice_no',$invoice_no)->first();
+//        dd($sale);
+        if($sale!=null){
+//            foreach($sale as $s){
+//                foreach($s->items as $it){
+//                    dd($it->pivot->qty);
+//                }
+//            }
+            $print_vc = PDF::loadView('Sale.print_voucher',compact('sale'));
+            return $print_vc->download($invoice_no.'.pdf');
+        }
     }
 }

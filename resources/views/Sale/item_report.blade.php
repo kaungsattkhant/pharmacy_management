@@ -24,7 +24,8 @@
                         <span class="field">To:</span>
                         <input type="text" id="to_datepicker" autocomplete="off" style=""  name="to_date" class=" to_date border-top-0 border-right-0 border-left-0  dtpick-input2 col-md-8" placeholder="YY-MM-DD">
                     </label>
-                    <button  class="btn btn-default fontsize-mount cs-btn btn-sm"  id="item_report_filter">Filter</button>
+                        <button  class="btn btn-default fontsize-mount cs-btn btn-sm"  id="item_report_filter">Filter</button>
+
                 </div>
             </div>
         </div>

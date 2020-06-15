@@ -93,6 +93,12 @@ input:focus{
     background-color: whitesmoke;
     padding:3px 0 0 3px;
 }
+.list-group-item:hover{
+    background-color: gray;
+}
+li i {
+    padding-right:10px;
+}
 /**************************login css**********************/
 .login_body{
     background-color: navajowhite;

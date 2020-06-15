@@ -10,14 +10,36 @@ use Illuminate\Support\Facades\Validator;
 class ItemController extends Controller
 {
     public function index(Request $request){
-        $items=Item::orderBy('name','asc')->paginate(10);
+        $items=Item::orderBy('name','asc')->where('branch_id',1)->paginate(10);
         if($request->ajax()){
             return view('Item.item_index_filter',compact('items'));
         }
         return view('Item.item_index',compact('items'));
     }
     public function index_filter(Request $request){
-        $items=Item::where('branch_id',$request->branch)->orderBy('name','asc')->paginate(10);
+//        dd($request->all());
+        if($request->sort_by=="sort_by_alphabet"){
+            $items=Item::where('branch_id',$request->branch)->orderBy('name','asc')->paginate(10);
+
+        }elseif($request->sort_by=="sort_by_qty"){
+            $items=Item::where('branch_id',$request->branch)->orderBy('qty','asc')->paginate(10);
+
+        }elseif($request->sort_by=="sort_by_price"){
+            $items=Item::where('branch_id',$request->branch)->orderBy('price','desc')->paginate(10);
+
+        }elseif($request->sort_by=="sort_by_expire_date"){
+            $items=Item::where('branch_id',$request->branch)->orderBy('expire_date','asc')->paginate(10);
+
+        }
+        elseif($request->sort_by=="sort_by_category"){
+//            $items=Item::where('branch_id',$request->branch)->whereHas('category',function ($q){
+//                dd($q);
+//                $q->orderBy('name','asc')->get();
+//                dd($q);
+//                })->paginate(10);
+            $items=Item::where('branch_id',$request->branch)->paginate(10);
+        }
+//        $items=Item::where('branch_id',$request->branch)->orderBy('name','asc')->paginate(10);
         return view('Item.item_index_filter',compact('items'));
     }
     public function store(Request $request){
@@ -28,6 +50,7 @@ class ItemController extends Controller
             'qty'=>'required',
             'category'=>'required',
             'branch'=>'required',
+            'expire_date'=>'required',
         ]);
         if($vData->passes())
         {
@@ -35,11 +58,10 @@ class ItemController extends Controller
                     'branch_id'=>$request->branch,
                     ],
                 [
-//                'name'=>$request->name,
-                'price'=>$request->price,
-                'qty'=>$request->qty,
-                'category_id'=>$request->category,
-//                'branch_id'=>$request->branch,
+                    'price'=>$request->price,
+                    'qty'=>$request->qty,
+                    'category_id'=>$request->category,
+                    'expire_date'=>$request->expire_date,
             ]);
             return response()->json([
                 'is_success'=>true,
@@ -62,6 +84,8 @@ class ItemController extends Controller
             'qty'=>'required|integer',
             'category'=>'required',
             'branch'=>'required',
+            'expire_date'=>'required',
+
         ]);
         if($vData->passes()){
             Item::whereId($request->id)->update([
@@ -70,6 +94,7 @@ class ItemController extends Controller
                 'qty'=>$request->qty,
                 'category_id'=>$request->category,
                 'branch_id'=>$request->branch,
+                'expire_date'=>$request->expire_date,
             ]);
             return response()->json([
                 'is_success'=>true,

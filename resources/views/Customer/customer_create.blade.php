@@ -28,7 +28,14 @@
                     <span class="text-danger">
                                     <strong id="email_error"></strong>
                                 </span>
-                    <div class="mb-3">
+                        <div class="mb-3 {{$errors->has('email') ? 'has:error':''}}">
+                            <label for="#pass123" class="w-25">NRC</label>
+                            <input type="text" id="nrc" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-7">
+                        </div>
+                        <span class="text-danger">
+                                    <strong id="nrc_error"></strong>
+                                </span>
+                        <div class="mb-3">
                         <label for="#pass123" class="w-25">Phone No</label>
                         <input type="text" id="phone_number"  class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-7">
 
@@ -39,8 +46,8 @@
                     <div class="mb-3">
                         <label for="#pass123" class="w-25">Pulse Rate</label>
                         <input type="number" id="pulse_rate" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-7">
-
                     </div>
+
                     <span class="text-danger">
                                     <strong id="pulse_rate_error"></strong>
                                 </span>
@@ -50,6 +57,13 @@
                     </div>
                     <span class="text-danger">
                                     <strong id="address_error"></strong>
+                    </span>
+                    <div class="mb-3">
+                        <label for="#pass123" class="w-25">Special Note</label>
+                        <textarea id="special_note" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-7"></textarea>
+                    </div>
+                    <span class="text-danger">
+                                    <strong id="special_note_error"></strong>
                     </span>
                     <div class="m-button pt-3">
                         {{--                        <button type="button" class="btn btn-default cs-btn" data-dismiss="modal">Cancel</button>--}}

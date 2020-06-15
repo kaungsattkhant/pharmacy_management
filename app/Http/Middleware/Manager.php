@@ -22,5 +22,6 @@ class Manager
 
             }
         }
+        return redirect('login');
     }
 }

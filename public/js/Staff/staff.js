@@ -82,7 +82,7 @@ $(document).ready(function(){
         var name = $("#name1").val();
         var role=$('#role1').val();
         // var branch=$('#branch1').val();
-        role==1 ? branch=null :branch=$('#branch1').val();
+        role===1 ? branch=null :branch=$('#branch1').val();
         var id=$('#id').val();
         $('#phone_number-error1').html("");
         $('#name1').html("");

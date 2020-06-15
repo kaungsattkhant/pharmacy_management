@@ -18,6 +18,7 @@ class CreateItemsTable extends Migration
             $table->char('name',120);
             $table->bigInteger('price');
             $table->integer('qty');
+            $table->date('expire_date');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('branch_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade')->onUpdate('cascade');

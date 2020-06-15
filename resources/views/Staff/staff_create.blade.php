@@ -61,7 +61,7 @@
 
                     <div class="branch_div mb-3 row fs-select4 {{$errors->has('branch') ? 'has:error':''}}" id="branch_div">
                         <label for="#role" class="w-25" style="padding-left: 16px;">Branch</label>
-                        <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount border-top-0 col-md-7" style="background:none;border-top:0;border-left:0;border-right:0;border-bottom: 0;" id="branch">
+                        <select name="branch" class="form-control-sm show-menu-arrow ml-1 bd-bottom-mount border-top-0 col-md-7" style="background:none;border-top:0;border-left:0;border-right:0;border-bottom: 0;" id="b">
                             <option selected disabled>--Choose Branch--</option>
                             @php
                                 $branches=\App\Model\Branch::all();

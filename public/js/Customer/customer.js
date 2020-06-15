@@ -28,6 +28,8 @@ $(document).ready(function(){
         var address=$('#address').val();
         var phone_number=$('#phone_number').val();
         var pulse_rate=$('#pulse_rate').val();
+        var nrc=$('#nrc').val();
+        var special_note=$('#special_note').val();
         // role===1 ? branch=null :branch=$('#b').val();
         event.preventDefault();
         $.ajax({
@@ -39,6 +41,8 @@ $(document).ready(function(){
                 phone_number:phone_number,
                 address:address,
                 pulse_rate:pulse_rate,
+                nrc:nrc,
+                special_note:special_note
             },
             success:function(data)
             {
@@ -60,6 +64,12 @@ $(document).ready(function(){
                     if(data.errors.address){
                         $( '#address_error' ).html( data.errors.address[0]);
                     }
+                    if(data.errors.special_note){
+                        $( '#special_note_error' ).html( data.errors.special_note[0]);
+                    }
+                    if(data.errors.nrc){
+                        $( '#nrc_error' ).html( data.errors.nrc[0]);
+                    }
                 }
                 if(data.is_success==true)
                 {
@@ -80,6 +90,8 @@ $(document).ready(function(){
         var phone_number=$('#phone_number1').val();
         var pulse_rate=$('#pulse_rate1').val();
         var id=$('#id').val();
+        var nrc=$('#nrc1').val();
+        var special_note=$('#special_note1').val();
         $('#phone_number-error1').html("");
         $('#name1').html("");
         $('#show-success').html("");
@@ -95,6 +107,8 @@ $(document).ready(function(){
                 phone_number:phone_number,
                 address:address,
                 pulse_rate:pulse_rate,
+                nrc:nrc,
+                special_note:special_note
             },
             success:function(data)
             {
@@ -114,6 +128,12 @@ $(document).ready(function(){
                     }
                     if(data.errors.address){
                         $( '#address_error1' ).html( data.errors.address[0]);
+                    }
+                    if(data.errors.special_note){
+                        $( '#special_note_error1' ).html( data.errors.special_note[0]);
+                    }
+                    if(data.errors.nrc){
+                        $( '#nrc_error1' ).html( data.errors.nrc[0]);
                     }
                 }
                 if(data.is_success==true)
@@ -180,9 +200,11 @@ function editCustomer(id)
             $('#id').val(data.id);
             $('#email1').val(data.email);
             $('#name1').val(data.name);
+            $('#nrc1').val(data.nrc);
             $('#phone_number1').val(data.phone_number);
             $('#pulse_rate1').val(data.pulse_rate);
             $('#address1').val(data.address);
+            $('#special_note1').val(data.special_note);
             $('#customer_edit').modal('show');
         }
     });
