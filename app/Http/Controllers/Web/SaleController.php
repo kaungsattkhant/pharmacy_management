@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Exports\ItemReportExport;
 use App\Exports\SaleRecordExport;
 use App\Exports\InvoiceExport;
 use App\Http\Controllers\Controller;
@@ -122,6 +123,7 @@ class SaleController extends Controller
         return view('Sale.sale_record',compact('sales'));
     }
     public function sale_record_filter(Request $request){
+
         $route_name=$request->route()->getName();
         if($request->branch){
             $branch_id=$request->branch;
@@ -133,22 +135,21 @@ class SaleController extends Controller
                 'from_date'=>'required',
                 'to_date'=>'required',
             ]);
+            $from=Carbon::createFromFormat('Y-m-d', $request->from_date)->toDateString();
+            $to=Carbon::createFromFormat('Y-m-d', $request->to_date)->toDateString();
             $sales=$this->invoice_export($request,$branch_id);
             if($sales!=null){
-                return Excel::download(new InvoiceExport($sales), 'sales.xlsx');
+                return Excel::download(new InvoiceExport($sales), $from.' To '.$to.'.xlsx');
             }
             else{
-                $sales=Sale::paginate(10);
-                return view('Sale.sale_record',compact('sales'));
+                return redirect('sale/sale_record');
             }
 
         }else{
             $sales=$this->sale_filter_trait($request,$branch_id);
         }
-
             return view('Sale.sale_record_filter',compact('sales'));
     }
-
     public function sale_detail($sale_id){
         $sale=Sale::whereid($sale_id)->firstOrfail();
         $items=$sale->items;
@@ -250,30 +251,62 @@ class SaleController extends Controller
     }
     public function item_report_filter(Request $request){
 
+        $route_name=$request->route()->getName();
+
         $branch_id=$request->branch;
-        $items=Item::orderBy('name','asc')->where('branch_id',$request->branch)->paginate(3);
-        foreach($items as $it){
-            $sales=Sale::whereHas('staff',function ($q)use($branch_id){
-                $q->where('branch_id',$branch_id);
-            })->where(function ($q)use($request) {
-                $q->whereDate('date_time', '>=', $request->from_date)
-                    ->whereDate('date_time', '<=', $request->to_date);
-            })->get();
-            $total_sale=0;
-            $total_qty=0;
-            foreach($sales as $s){
-                foreach($s->items as $p){
-                    if($p->id== $it->id){
-                        $total_sale+= $p->price *$p->pivot->qty;
-                        $total_qty+=$p->pivot->qty;
-                    }
+//        foreach($items as $it) {
+//            $sales = Sale::whereHas('staff', function ($q) use ($branch_id) {
+//                $q->where('branch_id', $branch_id);
+//            })->where(function ($q) use ($request) {
+//                $q->whereDate('date_time', '>=', $request->from_date)
+//                    ->whereDate('date_time', '<=', $request->to_date);
+//            })->get();
+//            $total_sale = 0;
+//            $total_qty = 0;
+//            foreach ($sales as $s) {
+//                foreach ($s->items as $p) {
+//                    if ($p->id == $it->id) {
+//                        $total_sale += $p->price * $p->pivot->qty;
+//                        $total_qty += $p->pivot->qty;
+//                    }
+//                }
+//            }
+//            $it->sale = $total_sale;
+//            $it->total_qty = $total_qty;
+//        }
+        $items=$this->getItemReport($request,$branch_id,$route_name);
+        if($route_name=='item_export'){
+            $vd=$request->validate([
+                'from_date'=>'required',
+                'to_date'=>'required',
+            ]);
+            $from=Carbon::createFromFormat('Y-m-d', $request->from_date)->toDateString();
+            $to=Carbon::createFromFormat('Y-m-d', $request->to_date)->toDateString();
+//            $it=Item::orderBy('name','asc')->where('branch_id',$request->branch)->get();
+            $results=$this->getItemReport($request,$branch_id,$route_name);
+            if($results->isNotEmpty()){
+                foreach($results as $k=>$rs){
+                    $b[$k]=new \stdClass();
+                    $b[$k]->name=$rs->name;
+                    $b[$k]->price=$rs->price;
+//                    $b[$k]->qty=$rs->qty;
+                    $b[$k]->total_qty=$rs->total_qty;
+                    $b[$k]->total_mmk=$rs->sale;
+                    $b[$k]->category=$rs->category->name;
+                    $b[$k]->branch=$rs->branch->name;
                 }
+                $items=collect($b);
+                return Excel::download(new ItemReportExport($items),$from.' To '.$to.'.xlsx');
+            }else{
+                return redirect('sale/item_report');
             }
-            $it->sale=$total_sale;
-            $it->total_qty=$total_qty;
+
+//            return view('Sale.item_report_filter',compact('items'));
+
         }
         return view('Sale.item_report_filter',compact('items'));
     }
+
     public function pdf(Request $request){
 //        $invoice_no=$request->invoice_no;
         $invoice_no="B11206202000001";

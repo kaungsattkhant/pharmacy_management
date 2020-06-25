@@ -43,7 +43,7 @@
     <div>
                 <table class="table bg-white box-shadow-mount rounded-table-mount mt-1"  id="myTable" >
                     <thead>
-                    <tr>
+                    <tr>    
                         <th scope="col" class=" border-top-0 fontsize-mount6">Item</th>
                         <th scope="col" class=" border-top-0 fontsize-mount6">Qty</th>
                         <th scope="col" class=" border-top-0 fontsize-mount6">Price</th>

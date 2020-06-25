@@ -4,7 +4,7 @@ namespace App\Exports;
 
 use App\Model\Sale;
 use Maatwebsite\Excel\Concerns\FromCollection;
-
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class SaleRecordExport implements FromCollection
 {

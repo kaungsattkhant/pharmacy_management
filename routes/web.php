@@ -94,6 +94,7 @@ Route::group(['middleware'=>['frontman']],function() {
             Route::get('sale_record','SaleController@sale_record');
             Route::get('sale_record_filter','SaleController@sale_record_filter');
             Route::post('sale_record_export','SaleController@sale_record_filter')->name('sale_record_export');
+            Route::post('item_export','SaleController@item_report_filter')->name('item_export');
             Route::get('/{id}/detail','SaleController@sale_detail');
             Route::get('print_pdf','SaleController@pdf');
         });
