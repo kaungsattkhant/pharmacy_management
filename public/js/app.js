@@ -2005,6 +2005,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   // mounted() {
@@ -2024,7 +2025,9 @@ __webpack_require__.r(__webpack_exports__);
       errorMessage: '',
       qty_error: true,
       submit_error: true,
-      add_cart_error: true
+      add_cart_error: true,
+      qty_available: false,
+      avl_msg: ''
     };
   },
   mounted: function mounted() {// console.log(this.item_list);
@@ -2037,6 +2040,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.results = [];
+      this.avl_msg = '';
 
       if (this.search.length > 0) {
         axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/sale/get_item_name', {
@@ -2063,6 +2067,7 @@ __webpack_require__.r(__webpack_exports__);
       this.qty_error = false; // console.log(this);
     },
     addItem: function addItem() {
+      this.avl_msg = '';
       this.submit_error = false;
       this.qty_error = true;
       this.add_cart_error = true;
@@ -2070,7 +2075,8 @@ __webpack_require__.r(__webpack_exports__);
         id: this.item_id,
         name: this.search,
         qty: this.qty,
-        price: this.price
+        price: this.price,
+        available: this.old_qty
       });
       this.getTotal(this.item_list);
       this.modal = false;
@@ -2117,6 +2123,38 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         this.errorMessage = '';
         this.add_cart_error = false;
+      }
+    },
+    qtyUpdate: function qtyUpdate(items, index, type) {
+      // console.log(items);
+      if (type == 'increase') {
+        vm = this;
+        $.each(items, function (key, value) {
+          // console.log(value);
+          if (key == index) {
+            value.qty = parseInt(value.qty, 10) + 1;
+
+            if (value.qty >= vm.old_qty) {
+              vm.submit_error = true;
+              vm.errorMessage = "You can't checkout because of exceed quantity of available."; // vm.avl_msg='Available';
+              // vm.qty_available=true;
+            }
+          } // parseInt(value.qty,10)=1;
+
+        }); // console.log(items);
+      } else if (type == 'decrease') {
+        var vm = this;
+        $.each(items, function (key, value) {
+          if (key == index) {
+            value.qty = parseInt(value.qty, 10) - 1;
+            vm.submit_error = false;
+            vm.errorMessage = '';
+
+            if (value.qty <= 0) {
+              vm.deleteItem(items, index);
+            }
+          }
+        });
       }
     },
     isDisable: function isDisable(text) {
@@ -39901,19 +39939,17 @@ var render = function() {
             }
           }
         },
-        [_vm._v("Done")]
-      )
+        [_vm._v("CheckOut")]
+      ),
+      _vm._v(" "),
+      _vm.errorMessage
+        ? _c("span", { staticClass: "bg-danger float-right" }, [
+            _vm._v(_vm._s(_vm.errorMessage))
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "left-div col-lg-5 bg-light  float-left mt-5 " }, [
-      _c("div", [
-        _vm.errorMessage
-          ? _c("span", { staticClass: "text-danger" }, [
-              _vm._v(_vm._s(_vm.errorMessage))
-            ])
-          : _vm._e()
-      ]),
-      _vm._v(" "),
       _c("input", {
         directives: [
           {
@@ -40070,7 +40106,13 @@ var render = function() {
             ])
           : _c("i", [
               _vm._v("\n                        0\n                    ")
+            ]),
+        _vm._v(" "),
+        _vm.avl_msg
+          ? _c("span", { staticClass: "bg-success float-right pl-5" }, [
+              _vm._v(_vm._s(this.old_qty) + _vm._s(this.avl_msg))
             ])
+          : _vm._e()
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "table-responsive" }, [
@@ -40090,14 +40132,35 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", [
-                  _c("span", { staticClass: "badge" }, [
-                    _vm._v(
-                      " " + _vm._s(t.qty) + "\n                                "
-                    )
-                  ])
+                  _c(
+                    "button",
+                    {
+                      on: {
+                        click: function($event) {
+                          return _vm.qtyUpdate(_vm.item_list, index, "decrease")
+                        }
+                      }
+                    },
+                    [_vm._v("-")]
+                  ),
+                  _vm._v(" " + _vm._s(t.qty) + " "),
+                  _c(
+                    "button",
+                    {
+                      attrs: { disabled: _vm.isDisable("QtyAvailable") },
+                      on: {
+                        click: function($event) {
+                          return _vm.qtyUpdate(_vm.item_list, index, "increase")
+                        }
+                      }
+                    },
+                    [_vm._v("+")]
+                  )
                 ]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(t.price))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(t.available))]),
                 _vm._v(" "),
                 _c("td", [
                   _c(
@@ -40134,6 +40197,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Qty")]),
         _vm._v(" "),
         _c("th", [_vm._v("Price")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Available")]),
         _vm._v(" "),
         _c("th", [_vm._v("Action")])
       ])

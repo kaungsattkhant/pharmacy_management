@@ -2,14 +2,15 @@
     <div class="content  pt-3">
 <!--        <form>-->
             <div class="col-lg-12 ">
-                <button class=" btn btn-default cs-btn" @click="sendData()" :disabled="isDisable('Submit')">Done</button>
+                <button class=" btn btn-default cs-btn" @click="sendData()" :disabled="isDisable('Submit')">CheckOut</button>
+                <span class="bg-danger float-right" v-if="errorMessage">{{errorMessage}}</span>
+
             </div>
             <div class="left-div col-lg-5 bg-light  float-left mt-5 ">
-                <div>
-                    <span class="text-danger" v-if="errorMessage">{{errorMessage}}</span>
-                </div>
+<!--                <div>-->
+<!--                    <span class="text-danger" v-if="errorMessage">{{errorMessage}}</span>-->
+<!--                </div>-->
                 <input type="hidden" v-model="item_id" name="item_id" >
-
                 <div class="">
                     <label class="w-25">Name</label>
                     <input type="text"  autocomplete="off" name="name"  v-model="search" @input="getItemName" class="border-top-0 border-right-0 border-left-0 rounded-0 mount-input col-md-6"  @focus="modal=true">
@@ -37,7 +38,6 @@
 <!--                    </li>-->
 <!--                </ul>-->
             </div>
-
             <div class="col-lg-6 bg-light h-75 float-right mt-5">
                 <p ><b>Total:</b>
                     <i v-if="total">
@@ -47,6 +47,7 @@
                     <i v-else="total">
                         0
                     </i>
+                    <span v-if="avl_msg" class="bg-success float-right pl-5">{{this.old_qty}}{{this.avl_msg}}</span>
                 </p>
 <!--                <p v-else="total"><b>Total:</b>0</p>-->
                 <div class="table-responsive" >
@@ -57,6 +58,7 @@
                             <th>Name</th>
                             <th>Qty</th>
                             <th>Price</th>
+                            <th>Available</th>
                             <th>Action</th>
 <!--                            <th>Name</th>-->
                         </tr>
@@ -68,11 +70,10 @@
                                 {{t.name}}
                             </td>
                             <td>
-                                <span class="badge"> {{t.qty}}
-                                </span>
+                               <button v-on:click="qtyUpdate(item_list,index,'decrease')">-</button> {{t.qty}} <button v-on:click="qtyUpdate(item_list,index,'increase')" :disabled="isDisable('QtyAvailable')">+</button>
                             </td>
                             <td>{{t.price}}</td>
-
+                            <td>{{t.available}}</td>
                             <td>
                                 <button v-on:click="deleteItem(item_list,index)" class="float-right border-0">x</button>
                             </td>
@@ -115,6 +116,8 @@
                 qty_error:true,
                 submit_error:true,
                 add_cart_error:true,
+                qty_available:false,
+                avl_msg:'',
             }
         },
         mounted() {
@@ -126,6 +129,7 @@
         methods:{
             getItemName(){
                 this.results=[];
+                this.avl_msg='';
                 if(this.search.length>0){
                     axios.get('/sale/get_item_name',{
                         params:{
@@ -152,6 +156,7 @@
                 // console.log(this);
             },
             addItem(){
+                this.avl_msg='';
                 this.submit_error=false;
                 this.qty_error=true;
                 this.add_cart_error=true;
@@ -160,6 +165,7 @@
                         name:this.search,
                         qty:this.qty,
                         price:this.price,
+                        available:this.old_qty,
                     });
                 this.getTotal(this.item_list);
                     this.modal=false;
@@ -208,10 +214,44 @@
                     this.add_cart_error=false;
                 }
             },
+            qtyUpdate(items,index,type){
+                // console.log(items);
+                if(type=='increase'){
+                    vm=this;
+                    $.each(items,function (key,value) {
+                        // console.log(value);
+                        if(key==index){
+                            value.qty=parseInt(value.qty,10)+1;
+                            if(value.qty>=vm.old_qty){
+                                vm.submit_error=true;
+                                vm.errorMessage="You can't checkout because of exceed quantity of available."
+                                // vm.avl_msg='Available';
+                                // vm.qty_available=true;
+                            }
+                        }
+                        // parseInt(value.qty,10)=1;
+
+                    });
+                    // console.log(items);
+                }else if(type=='decrease'){
+
+                    var vm=this
+                    $.each(items,function (key,value) {
+                        if(key==index){
+                            value.qty=parseInt(value.qty,10)-1;
+                            vm.submit_error=false;
+                            vm.errorMessage='';
+                            if(value.qty<=0){
+                                vm.deleteItem(items,index);
+                            }
+                        }
+
+                    });
+                }
+            },
             isDisable(text){
                 if(text=='Submit'){
                     return this.submit_error==true;
-
                 }else if(text=='Qty'){
                     return this.qty_error==true;
 

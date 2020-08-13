@@ -36,7 +36,6 @@ Route::group(['middleware'=>['admin']],function() {
             Route::get('{id}/edit','BranchController@edit');
             Route::post('update','BranchController@update');
             Route::post('destroy','BranchController@destroy');
-
         });
 //        Route::group(['prefix'=>'item'],function(){
 //            Route::get('/','ItemController@index');
